@@ -1,0 +1,35 @@
+{
+    "name": "phossa2/event",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/phossa2/event",
+    "description": "Event management libraray for PHP",
+    "keywords": [ "phossa2", "phossa", "event" ],
+    "authors": [
+        {
+            "name": "Hong Zhang",
+            "homepage": "https://github.com/phossa2"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "phossa2/shared": "^2.0.9"
+    },
+    "autoload": {
+        "psr-0": { "Phossa2\\Event\\": "src/" }
+    },
+    "config": {
+        "platform": {
+            "php": "5.4.0"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    },
+    "archive": {
+        "exclude": [ "!vendor", "tests", "composer.lock" ]
+    }
+}
