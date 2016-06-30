@@ -14,7 +14,6 @@
 
 namespace Phossa2\Event\Interfaces;
 
-use Phossa2\Event\EventResult;
 use Phossa2\Event\Message\Message;
 use Phossa2\Event\Exception\InvalidArgumentException;
 
@@ -58,10 +57,10 @@ trait EventTrait
     /**
      * Results from the handlers
      *
-     * @var    EventResult
+     * @var    array
      * @access protected
      */
-    protected $results;
+    protected $results = [];
 
     /**
      * stop propagation
@@ -194,18 +193,14 @@ trait EventTrait
      */
     public function addResult($result)
     {
-        if (is_null($this->results)) {
-            $this->results = new EventResult();
-        }
-        $this->results->push($result);
-
+        $this->results[] = $result;
         return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getResults()/*# : EventResult */
+    public function getResults()/*# : array */
     {
         return $this->results;
     }

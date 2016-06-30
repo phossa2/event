@@ -14,7 +14,7 @@
 
 namespace Phossa2\Event;
 
-use Phossa2\Shared\Base\ObjectAbstract;
+use Phossa2\Shared\Shareable\Shareable;
 use Phossa2\Event\Interfaces\EventManagerInterface;
 
 /**
@@ -25,6 +25,6 @@ use Phossa2\Event\Interfaces\EventManagerInterface;
  * @version 2.0.0
  * @since   2.0.0 added
  */
-class EventManager extends ObjectAbstract implements EventManagerInterface
+class EventManager extends Shareable implements EventManagerInterface
 {
 }

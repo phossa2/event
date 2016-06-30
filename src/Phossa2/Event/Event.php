@@ -17,7 +17,7 @@ namespace Phossa2\Event;
 use Phossa2\Shared\Base\ObjectAbstract;
 use Phossa2\Event\Interfaces\EventTrait;
 use Phossa2\Event\Interfaces\EventInterface;
-use Phossa2\Event\Interfaces\ArrayAccessTrait;
+use Phossa2\Event\Interfaces\EventArrayAccessTrait;
 use Phossa2\Event\Exception\InvalidArgumentException;
 
 /**
@@ -51,7 +51,7 @@ use Phossa2\Event\Exception\InvalidArgumentException;
  */
 class Event extends ObjectAbstract implements EventInterface
 {
-    use EventTrait, ArrayAccessTrait;
+    use EventTrait, EventArrayAccessTrait;
 
     /**
      * Constructor

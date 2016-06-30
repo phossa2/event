@@ -22,7 +22,7 @@ namespace Phossa2\Event\Interfaces;
  * @version 2.0.0
  * @since   2.0.0 added
  */
-trait ArrayAccessTrait
+trait EventArrayAccessTrait
 {
     public function offsetExists($offset)/*# : bool */
     {

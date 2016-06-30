@@ -107,7 +107,7 @@ trait EventQueueTrait
     }
 
     /**
-     * Fix priority
+     * Fix priority to 0 - 100
      *
      * @param  int $priority
      * @return int
@@ -127,8 +127,8 @@ trait EventQueueTrait
      */
     protected function generateKey(/*# int */ $priority)/*# : int */
     {
-        static $MAX = 9999999;
-        return $priority * 10000000 + $MAX--;
+        static $CNT = 0;
+        return $priority * 10000000 + $CNT++;
     }
 
     /**

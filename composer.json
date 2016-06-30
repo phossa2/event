@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "phossa2/shared": "^2.0.9"
+        "phossa2/shared": "^2.0.10"
     },
     "autoload": {
         "psr-0": { "Phossa2\\Event\\": "src/" }

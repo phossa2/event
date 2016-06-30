@@ -78,7 +78,7 @@ trait EventCapableTrait
         $evt = $this->createEvent($eventName, $properties);
 
         // process it
-        return $this->getEventManager()->processEvent($evt);
+        return $this->getEventManager()->triggerEvent($evt);
     }
 
     /**

@@ -67,7 +67,7 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
      */
     public function getIterator()
     {
-        // sort first if not yet
+        // sort queue if not yet
         $this->sortQueue();
 
         // return iterator

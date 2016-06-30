@@ -14,7 +14,6 @@
 
 namespace Phossa2\Event\Interfaces;
 
-use Phossa2\Event\EventResult;
 use Phossa2\Event\Exception\InvalidArgumentException;
 
 /**
@@ -138,21 +137,23 @@ interface EventInterface extends \ArrayAccess
     public function setProperties(array $properties);
 
     /**
-     * Add result from the handler
+     * Add result from the current handler
      *
      * @param  mixed $result
      * @return $this
      * @access public
+     * @api
      */
     public function addResult($result);
 
     /**
-     * Get the results from handlers
+     * Get all the results
      *
-     * @return EventResult
+     * @return array
      * @access public
+     * @api
      */
-    public function getResults()/*# : EventResult */;
+    public function getResults()/*# : array */;
 
     /**
      * Stop event propagation
