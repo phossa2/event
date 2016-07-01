@@ -24,5 +24,96 @@ namespace Phossa2\Event\Interfaces;
  */
 interface EventManagerInterface
 {
+    /**
+     * Bind a callable to event name with priority 0 - 100 (100 executed last)
+     *
+     * e.g.
+     * ```php
+     * $events = new EventManager();
+     *
+     * // bind event 'user.login' to a callable
+     * $events->on('user.login', function(Event $evt) {
+     *     $user = $evt->getProperty('user');
+     *     //...
+     * });
+     *
+     * // trigger the 'user.login' event with some data
+     * $events->triggerEvent(new Event('user.login', $this, ['user' => $user]));
+     * ```
+     *
+     * @param  string $eventName
+     * @param  callable $callable
+     * @param  int $priority
+     * @return $this
+     * @access public
+     * @api
+     */
+    public function on(
+        /*# string */ $eventName,
+        callable $callable,
+        /*# int */ $priority = 50
+    );
 
+    /**
+     * Unbind a callable from a specific eventName
+     *
+     * @param  string $eventName
+     * @param  callable $callable
+     * @return $this
+     * @access public
+     * @api
+     */
+    public function off(
+        /*# string */ $eventName,
+        callable $callable
+    );
+
+    /**
+     * trigger and process the event
+     *
+     * @param  EventInterface $event
+     * @return $this
+     * @access public
+     * @api
+     */
+    public function triggerEvent(EventInterface $event);
+
+    /**
+     * Does $eventName exist
+     *
+     * @param  string $eventName
+     * @return bool
+     * @access public
+     * @api
+     */
+    public function hasEventQueue(/*# string */ $eventName)/*# : bool */;
+
+    /**
+     * Get the EventQueue associated with this $eventName
+     *
+     * @param  string $eventName
+     * @return EventQueueInterface|null
+     * @access public
+     * @api
+     */
+    public function getEventQueue(/*# string */ $eventName);
+
+    /**
+     * Get all event name this manager handles in array
+     *
+     * @return string[]
+     * @access public
+     * @api
+     */
+    public function getEventNames()/*# : array */;
+
+    /**
+     * Clear the $eventName queue
+     *
+     * @param  string $eventName
+     * @return $this
+     * @access public
+     * @api
+     */
+    public function clearEventQueue(/*# string */ $eventName);
 }
