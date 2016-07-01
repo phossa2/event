@@ -78,7 +78,10 @@ trait EventCapableTrait
         $evt = $this->createEvent($eventName, $properties);
 
         // process it
-        return $this->getEventManager()->triggerEvent($evt);
+        $this->getEventManager()->trigger($evt);
+
+        // return the event
+        return $evt;
     }
 
     /**
@@ -98,10 +101,10 @@ trait EventCapableTrait
             $this->event_proto = new Event($eventName, $this);
         }
 
-        // clone event
+        // clone the prototype
         $evt = clone $this->event_proto;
 
-        // init event
+        // init the event and return it
         return $evt($eventName, $this, $properties);
     }
 }

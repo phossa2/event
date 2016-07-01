@@ -27,7 +27,7 @@ namespace Phossa2\Event\Interfaces;
 interface EventQueueInterface extends \IteratorAggregate, \Countable
 {
     /**
-     * Insert event handler into queue with priority
+     * Insert event handler into the queue with priority
      *
      * @param  callable $callable
      * @param  int $priority priority, 0 - 100, 0 executed first
@@ -57,12 +57,10 @@ interface EventQueueInterface extends \IteratorAggregate, \Countable
     public function flush();
 
     /**
-     * Combine with another event queue and return the new queue
-     *
-     * return the result event queue, self queue is not changed
+     * Combine with another handler queue and return a new and combined one
      *
      * @param  EventQueueInterface $queue
-     * @return EventQueueInterface a new event queue
+     * @return EventQueueInterface a new and combined event queue
      * @access public
      * @api
      */

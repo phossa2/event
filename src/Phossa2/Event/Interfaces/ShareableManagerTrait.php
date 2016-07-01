@@ -14,18 +14,49 @@
 
 namespace Phossa2\Event\Interfaces;
 
+use Phossa2\Shared\Shareable\ShareableTrait;
+use Phossa2\Shared\Shareable\ShareableInterface;
+
 /**
- * Shareable stuff for event manager
+ * ShareableManagerTrait
+ *
+ * Support for shared managers using ShareableTrait
+ *
+ * ```php
+ * // one event manager instance
+ * $event_dispatcher = new EventDispatcher();
+ *
+ * // global event manager, default scope is ''
+ * $globalManager = EventDispatcher::getShareable();
+ *
+ * // shared manager for a scope, say 'MVC'
+ * $MvcManager = EventDispatcher::getShareable('MVC');
+ *
+ * // class/interface level shared manager
+ * $classManager = EventDispatcher::getShareable('Phossa\\Config\\Config');
+ * ```
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
+ * @see     ShareableInterface
  * @version 2.0.0
  * @since   2.0.0 added
  */
 trait ShareableManagerTrait
 {
+    use ShareableTrait;
+
     /**
-     * Override `getScopes()` in Shareable
+     * classes/interfaces with attached listeners
+     *
+     * @var    string[]
+     * @access protected
+     * @staticvar
+     */
+    protected static $classes = [];
+
+    /**
+     * Override `getScopes()` in ShareableTrait
      *
      * {@inheritDoc}
      */

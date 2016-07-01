@@ -28,7 +28,7 @@ namespace Phossa2\Event\Interfaces;
 trait ListenerAwareTrait
 {
     /**
-     * listener cache of fixed events handler
+     * cache for listeners' event handlers
      *
      * @var    array
      * @access protected
@@ -40,7 +40,10 @@ trait ListenerAwareTrait
      */
     public function attachListener(ListenerInterface $listener)
     {
+        // get the standardized handlers of the $listener
         $events = $this->listenerEvents($listener);
+
+        // add to manager's event pool
         foreach ($events as $handler) {
             $this->on($handler[0], $handler[1], $handler[2]);
         }
@@ -54,12 +57,16 @@ trait ListenerAwareTrait
         ListenerInterface $listener,
         /*# string */ $eventName = ''
     ) {
+        // get the standardized handlers of the $listener
         $events = $this->listenerEvents($listener);
+
+        // try find the match
         foreach ($events as $handler) {
             if ('' == $eventName || $handler[0] === $eventName) {
                 $this->off($handler[0], $handler[1]);
             }
         }
+
         return $this;
     }
 
@@ -81,7 +88,7 @@ trait ListenerAwareTrait
     }
 
     /**
-     * Standarize events definition
+     * standardize events definition
      *
      * @param  array $eventsDefinition
      * @return array
@@ -103,7 +110,7 @@ trait ListenerAwareTrait
     }
 
     /**
-     * Standarize to array of 'method1' or ['method1', 20]
+     * standardize to array of 'method1' or ['method1', 20]
      *
      * @param  ListenerInterface $listener
      * @param  string $eventName
@@ -126,7 +133,7 @@ trait ListenerAwareTrait
     }
 
     /**
-     * Standarize one 'method1' or ['method1', 20]
+     * standardize one 'method1' or ['method1', 20]
      * to [eventName, callable, priority]
      *
      * @param  ListenerInterface $listener
@@ -151,7 +158,7 @@ trait ListenerAwareTrait
     }
 
     /**
-     * Standarize 'method' or callable to callable
+     * standardize 'method' or callable to callable
      *
      * @param  ListenerInterface $listener
      * @param  mixed $callable

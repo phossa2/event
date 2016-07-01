@@ -17,6 +17,8 @@ namespace Phossa2\Event\Interfaces;
 /**
  * EventCapableInterface
  *
+ * Classes implementing this interface is able to trigger events
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @version 2.0.0
@@ -46,7 +48,7 @@ interface EventCapableInterface
     );
 
     /**
-     * Get the event manager, if not set will create one
+     * Get the event manager. if not set yet, will CREATE ONE be default
      *
      * @return EventManagerInterface
      * @access public
@@ -58,7 +60,7 @@ interface EventCapableInterface
      * Trigger an event and processed it by event manager, return the event
      *
      * @param  string $eventName event name
-     * @param  array $properties (optional) event property array
+     * @param  array $properties (optional) custom event properties if any
      * @return EventInterface
      * @throws \Exception if event processing goes wrong
      * @access public

@@ -15,21 +15,37 @@
 namespace Phossa2\Event;
 
 use Phossa2\Shared\Base\ObjectAbstract;
-use Phossa2\Event\Interfaces\EventQueueTrait;
 use Phossa2\Event\Interfaces\EventQueueInterface;
 
 /**
  * EventQueue
  *
+ * One implementation of EventQueueInterface
+ *
  * ```php
+ * // create a new queue
  * $queue = new EventQueue();
+ *
+ * // insert a callable
  * $queue->insert($callable, 50);
  *
- * foreach ($queue as $q) {
- *     $call = $q['data'];
- *     $priority = $q['priority'];
- *     // ...
+ * // count handlers in the queue
+ * if (count($queue) > 0) {
+ *     // loop thru the queue
+ *     foreach ($queue as $q) {
+ *         $callable = $q['data'];
+ *         $priority = $q['priority'];
+ *     }
  * }
+ *
+ * // remove callable
+ * $queue->remove($callable);
+ *
+ * // merge with another queue
+ * $nqueue = $queue->combine($another_queue);
+ *
+ * // flush (empty)
+ * $queue->flush();
  * ```
  *
  * @package Phossa2\Event
@@ -41,17 +57,93 @@ use Phossa2\Event\Interfaces\EventQueueInterface;
  */
 class EventQueue extends ObjectAbstract implements EventQueueInterface
 {
-    use EventQueueTrait;
+    /**
+     * inner data storage
+     *
+     * @var    array
+     * @access protected
+     */
+    protected $queue;
+
+    /**
+     * marker for sorted queue
+     *
+     * @var    bool
+     * @access protected
+     */
+    protected $sorted = false;
 
     /**
      * constructor
      *
      * @access public
-     * @api
      */
     public function __construct()
     {
         $this->flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function insert(callable $callable, /*# int */ $priority = 50)
+    {
+        // fix priority, range is 0 - 100
+        $pri = $this->fixPriority((int) $priority);
+
+        // generate key (int)
+        $key = $this->generateKey($pri);
+
+        // make sure not duplicated
+        $this->remove($callable);
+
+        // added to the queue
+        $this->queue[$key] = ['data' => $callable, 'priority' => $pri];
+
+        // mark as not sorted
+        $this->sorted = false;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function remove(callable $callable)
+    {
+        foreach ($this->queue as $key => $val) {
+            if ($val['data'] === $callable) {
+                unset($this->queue[$key]);
+                break;
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdic}
+     */
+    public function flush()
+    {
+        $this->queue = [];
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function combine(
+        EventQueueInterface $queue
+    )/*# : EventQueueInterface */ {
+        // clone a new queue
+        $nqueue = clone $this;
+
+        // insert into new queue
+        foreach ($queue as $data) {
+            $nqueue->insert($data['data'], $data['priority']);
+        }
+
+        return $nqueue;
     }
 
     /**
@@ -72,5 +164,45 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
 
         // return iterator
         return new \ArrayIterator($this->queue);
+    }
+
+    /**
+     * Make sure priority in the range of 0 - 100
+     *
+     * @param  int $priority
+     * @return int
+     * @access protected
+     */
+    protected function fixPriority(/*# int */ $priority)/*# : int */
+    {
+        return $priority > 100 ? 100 : ($priority < 0 ? 0 : $priority);
+    }
+
+    /**
+     * Generate one int base on the priority
+     *
+     * @param  int $priority
+     * @return int
+     * @access protected
+     */
+    protected function generateKey(/*# int */ $priority)/*# : int */
+    {
+        static $CNT = 0;
+        return $priority * 10000000 + $CNT++;
+    }
+
+    /**
+     * Sort the queue from lower to higher int $key
+     *
+     * @return $this
+     * @access protected
+     */
+    protected function sortQueue()
+    {
+        if (!$this->sorted) {
+            ksort($this->queue);
+            $this->sorted = true;
+        }
+        return $this;
     }
 }

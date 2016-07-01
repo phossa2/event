@@ -1,0 +1,91 @@
+
+    /**
+     * Does $eventName exist
+     *
+     * @param  string $eventName
+     * @return bool
+     * @access public
+     * @api
+     */
+    public function hasEventQueue(/*# string */ $eventName)/*# : bool */;
+
+    /**
+     * Get the EventQueue associated with this $eventName
+     *
+     * @param  string $eventName
+     * @return EventQueueInterface|null
+     * @access public
+     * @api
+     */
+    public function getEventQueue(/*# string */ $eventName);
+
+    /**
+     * Get all event name this manager handles in array
+     *
+     * @return string[]
+     * @access public
+     * @api
+     */
+    public function getEventNames()/*# : array */;
+
+    /**
+     * Clear the $eventName queue
+     *
+     * @param  string $eventName
+     * @return $this
+     * @access public
+     * @api
+     */
+    public function clearEventQueue(/*# string */ $eventName);
+
+
+
+        /**
+     * {@inheritDoc}
+     */
+    public function clearEventQueue(/*# string */ $eventName)
+    {
+        unset($this->events[$eventName]);
+        return $this;
+    }
+
+
+        /**
+     * {@inheritDoc}
+     */
+    public function getEventQueue(/*# string */ $eventName) {
+        if (isset($this->events[$eventName])) {
+            return $this->events[$eventName];
+        }
+        return null;
+    }
+
+
+        /**
+     * Get a merged queue in THIS manager for event names provided
+     *
+     * @param  array $names
+     * @return EventQueueInterface
+     * @access protected
+     */
+    protected function matchEventQueues(
+        /*# array */ $names
+    )/*: EventQueueInterface */ {
+        $nqueue = $this->newEventQueue();
+        foreach ($names as $evtName) {
+            if ($this->hasEventQueue($evtName)) {
+                $nqueue = $nqueue->combine($this->getEventQueue($evtName));
+            }
+        }
+        return $nqueue;
+    }
+
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventNames()/*# : array */
+    {
+        return array_keys($this->events);
+    }

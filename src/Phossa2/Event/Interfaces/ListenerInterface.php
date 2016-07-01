@@ -17,6 +17,8 @@ namespace Phossa2\Event\Interfaces;
 /**
  * ListenerInterface
  *
+ * Classes implementing this interface will be able to listen to events
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @version 2.0.0

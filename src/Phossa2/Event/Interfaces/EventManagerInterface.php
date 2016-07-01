@@ -65,7 +65,7 @@ interface EventManagerInterface
      */
     public function off(
         /*# string */ $eventName,
-        callable $callable
+        callable $callable = null
     );
 
     /**
@@ -76,44 +76,5 @@ interface EventManagerInterface
      * @access public
      * @api
      */
-    public function triggerEvent(EventInterface $event);
-
-    /**
-     * Does $eventName exist
-     *
-     * @param  string $eventName
-     * @return bool
-     * @access public
-     * @api
-     */
-    public function hasEventQueue(/*# string */ $eventName)/*# : bool */;
-
-    /**
-     * Get the EventQueue associated with this $eventName
-     *
-     * @param  string $eventName
-     * @return EventQueueInterface|null
-     * @access public
-     * @api
-     */
-    public function getEventQueue(/*# string */ $eventName);
-
-    /**
-     * Get all event name this manager handles in array
-     *
-     * @return string[]
-     * @access public
-     * @api
-     */
-    public function getEventNames()/*# : array */;
-
-    /**
-     * Clear the $eventName queue
-     *
-     * @param  string $eventName
-     * @return $this
-     * @access public
-     * @api
-     */
-    public function clearEventQueue(/*# string */ $eventName);
+    public function trigger(EventInterface $event);
 }

@@ -31,10 +31,10 @@ interface EventInterface extends \ArrayAccess
      * Initialize this event
      *
      * @param  string $eventName
-     * @param  object|string $context
+     * @param  object|string $context originator object or static classname
      * @param  array $properties
      * @return $this
-     * @throws InvalidArgumentException if arguments not right
+     * @throws InvalidArgumentException if argument[s] not right
      * @access public
      * @api
      */
@@ -49,7 +49,7 @@ interface EventInterface extends \ArrayAccess
      *
      * @param  string $eventName event name
      * @return $this
-     * @throws InvalidArgumentException if $eventName not right
+     * @throws InvalidArgumentException if $eventName not a string
      * @access public
      * @api
      */
@@ -87,8 +87,6 @@ interface EventInterface extends \ArrayAccess
     /**
      * Has event property with $name
      *
-     * Use this hasProperty() before getProperty() to avoid exception
-     *
      * @param  string $name property name
      * @return bool
      * @access public
@@ -107,7 +105,7 @@ interface EventInterface extends \ArrayAccess
     public function getProperty(/*# string */ $name);
 
     /**
-     * Set the event property
+     * Set the event property, null to delete this property
      *
      * @param  string $name property name
      * @param  mixed $value property value
@@ -127,7 +125,7 @@ interface EventInterface extends \ArrayAccess
     public function getProperties()/*# : array */;
 
     /**
-     * Replace the event all properties
+     * Set/replace the event all properties
      *
      * @param  array $properties property array
      * @return $this

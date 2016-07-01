@@ -14,62 +14,119 @@
 
 namespace Phossa2\Event;
 
-use Phossa2\Shared\Shareable\Shareable;
-use Phossa2\Event\Interfaces\NameGlobbingTrait;
-use Phossa2\Event\Interfaces\EventManagerTrait;
-use Phossa2\Event\Interfaces\ListenerAwareTrait;
+use Phossa2\Shared\Base\ObjectAbstract;
+use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Interfaces\EventQueueInterface;
-use Phossa2\Event\Interfaces\ShareableManagerTrait;
 use Phossa2\Event\Interfaces\EventManagerInterface;
-use Phossa2\Event\Interfaces\ListenerAwareInterface;
 
 /**
  * EventManager
  *
- * A basic event manager with
- *
- * - global & shared managers: global, for each class, interfaces etc.
- *
- * - simple event globbing: such as 'user.*'
- *
- * - listener aggregation: attach/detach listener support (aggregating)
+ * A base implementation of EventManagerInterface
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @see     Shareable
+ * @see     ObjectAbstract
  * @see     EventManagerInterface
  * @version 2.0.0
  * @since   2.0.0 added
  */
-class EventManager extends Shareable implements EventManagerInterface, ListenerAwareInterface
+class EventManager extends ObjectAbstract implements EventManagerInterface
 {
-    use EventManagerTrait,
-        NameGlobbingTrait,
-        ListenerAwareTrait,
-        ShareableManagerTrait;
-
     /**
-     * classes/interfaces with attached listeners
+     * Events managing
      *
-     * @var    string[]
+     * @var    EventQueueInterface[]
      * @access protected
-     * @staticvar
      */
-    protected static $classes = [];
+    protected $events = [];
 
     /**
      * {@inheritDoc}
      */
-    public function __construct($scopes = '')
-    {
-        parent::__construct($scopes);
-
-        // add class name as scope also
-        $this->addScope($this->getClassName());
+    public function on(
+        /*# string */ $eventName,
+        callable $callable,
+        /*# int */ $priority = 50
+    ) {
+        if (!$this->hasEventQueue($eventName)) {
+            $this->events[$eventName] = $this->newEventQueue();
+        }
+        $this->events[$eventName]->insert($callable, $priority);
+        return $this;
     }
 
     /**
-     * Get a merged queue from related managers matching $eventName
+     * {@inheritDoc}
+     */
+    public function off(
+        /*# string */ $eventName,
+        callable $callable = null
+    ) {
+        if ($this->hasEventQueue($eventName)) {
+            if (null === $callable) {
+                // remove all
+                $this->events[$eventName]->flush();
+            } else {
+                // remove callable
+                $this->events[$eventName]->remove($callable);
+            }
+
+            // unset if empty
+            if (count($this->events[$eventName]) === 0) {
+                unset($this->events[$eventName]);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function trigger(EventInterface $event)
+    {
+        // get handler queue
+        $queue = $this->getMatchedQueue($event->getName());
+
+        // walk thru the queue
+        foreach ($queue as $q) {
+            // execute the handler
+            $result = $q['data']($event);
+
+            // break out if event stopped
+            if ($event->isPropagationStopped()) {
+                break;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Has $eventName been defined ?
+     *
+     * @param  string $eventName
+     * @return bool
+     * @access protected
+     */
+    protected function hasEventQueue(/*# string */ $eventName)/*# : bool */
+    {
+        return isset($this->events[$eventName]);
+    }
+
+    /**
+     * Get a new event queue
+     *
+     * @return EventQueueInterface
+     * @access protected
+     */
+    protected function newEventQueue()/*# : EventQueueInterface */
+    {
+        return new EventQueue();
+    }
+
+    /**
+     * Get related event handler queue for this $eventName
      *
      * @param  string $eventName
      * @return EventQueueInterface
@@ -78,24 +135,10 @@ class EventManager extends Shareable implements EventManagerInterface, ListenerA
     protected function getMatchedQueue(
         /*# : string */ $eventName
     )/*# : EventQueueInterface */ {
-        // get all shared managers
-        $managers = $this->getShareables();
-
-        $nqueue = $this->newEventQueue();
-
-        /* @var $mgr EventManager */
-        foreach ($managers as $mgr) {
-            // find $eventName related names in $mgr
-            $matchedNames = $mgr->globEventNames(
-                $eventName, $mgr->getEventNames()
-            );
-
-            // combined event queue from each $mgr
-            $nqueue = $nqueue->combine(
-                $mgr->matchEventQueues($matchedNames)
-            );
+        if ($this->hasEventQueue($eventName)) {
+            return $this->events[$eventName];
+        } else {
+            return $this->newEventQueue();
         }
-
-        return $nqueue;
     }
 }
