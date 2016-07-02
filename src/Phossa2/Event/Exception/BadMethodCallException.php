@@ -15,15 +15,15 @@
 namespace Phossa2\Event\Exception;
 
 /**
- * InvalidArgumentException for Phossa2\Event
+ * BadMethodCallException for Phossa2\Event
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @see     \InvalidArgumentException
+ * @see     \BadMethodCallException
  * @see     ExceptionInterface
  * @version 2.0.0
  * @since   2.0.0 added
  */
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+class BadMethodCallException extends \BadMethodCallException implements ExceptionInterface
 {
 }

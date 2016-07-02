@@ -53,6 +53,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
             $this->events[$eventName] = $this->newEventQueue();
         }
         $this->events[$eventName]->insert($callable, $priority);
+
         return $this;
     }
 
@@ -83,18 +84,21 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function trigger(EventInterface $event)
+    public function trigger($event, $context = null, array $properties = [])
     {
+        // make sure is an event
+        $evt = $this->newEvent($event, $context, $properties);
+
         // get handler queue
-        $queue = $this->getMatchedQueue($event->getName());
+        $queue = $this->getMatchedQueue($evt->getName());
 
         // walk thru the queue
         foreach ($queue as $q) {
             // execute the handler
-            $result = $q['data']($event);
+            $result = $q['data']($evt);
 
             // break out if event stopped
-            if ($event->isPropagationStopped()) {
+            if ($evt->isPropagationStopped()) {
                 break;
             }
         }
@@ -112,6 +116,27 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
     protected function hasEventQueue(/*# string */ $eventName)/*# : bool */
     {
         return isset($this->events[$eventName]);
+    }
+
+    /**
+     * Create a new event
+     *
+     * @param  string|EventInterface $eventName
+     * @param  object|string $context
+     * @param  array $properties
+     * @return EventInterface
+     * @access protected
+     */
+    protected function newEvent(
+        $eventName,
+        $context,
+        array $properties
+    )/*# : EventInterface */ {
+        if (is_object($eventName)) {
+            return $eventName;
+        } else {
+            return new Event($eventName, $context, $properties);
+        }
     }
 
     /**

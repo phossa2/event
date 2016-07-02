@@ -71,10 +71,12 @@ interface EventManagerInterface
     /**
      * trigger and process the event
      *
-     * @param  EventInterface $event
+     * @param  EventInterface|string $event
+     * @param  object|string $context
+     * @param  array $properties
      * @return $this
      * @access public
      * @api
      */
-    public function trigger(EventInterface $event);
+    public function trigger($event, $context = null, array $properties = []);
 }
