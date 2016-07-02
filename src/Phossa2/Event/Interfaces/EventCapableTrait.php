@@ -51,6 +51,14 @@ trait EventCapableTrait
         EventManagerInterface $eventManager
     ) {
         $this->event_manager = $eventManager;
+
+        // attach events from $this
+        if ($eventManager instanceof ListenerAwareInterface &&
+            $this instanceof ListenerInterface
+        ) {
+            $eventManager->attachListener($this);
+        }
+
         return $this;
     }
 
@@ -60,7 +68,7 @@ trait EventCapableTrait
     public function getEventManager()/*# : EventManagerInterface */
     {
         if (is_null($this->event_manager)) {
-            $this->event_manager = new EventDispatcher(__CLASS__);
+            $this->setEventManager(new EventDispatcher(get_class($this)));
         }
         return $this->event_manager;
     }

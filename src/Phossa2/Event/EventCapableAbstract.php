@@ -22,7 +22,7 @@ use Phossa2\Event\Interfaces\EventCapableInterface;
 /**
  * EventCapableAbstract
  *
- * Base class for event capable stuff
+ * Base class for event capable
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
