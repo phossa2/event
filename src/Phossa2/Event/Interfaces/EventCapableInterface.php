@@ -27,24 +27,19 @@ namespace Phossa2\Event\Interfaces;
 interface EventCapableInterface
 {
     /**
-     * Setup event related stuff
+     * Setup event manager
      *
      * ```php
-     * $this->setEventManager(
-     *     new EventManager(),
-     *     new MyEvent('prototype')
-     * );
+     * $this->setEventManager(new EventDispatcher());
      * ```
      *
      * @param  EventManagerInterface $eventManager
-     * @param  EventInterface $eventPrototype
      * @return $this
      * @access public
      * @api
      */
     public function setEventManager(
-        EventManagerInterface $eventManager,
-        EventInterface $eventPrototype = null
+        EventManagerInterface $eventManager
     );
 
     /**
@@ -55,6 +50,22 @@ interface EventCapableInterface
      * @api
      */
     public function getEventManager()/*# : EventManagerInterface */;
+
+    /**
+     * Setup event prototype
+     *
+     * ```php
+     * $this->setEventPrototype(
+     *     new MyEvent('prototype')
+     * );
+     * ```
+     *
+     * @param  EventInterface $eventPrototype
+     * @return $this
+     * @access public
+     * @api
+     */
+    public function setEventPrototype(EventInterface $eventPrototype);
 
     /**
      * Trigger an event and processed it by event manager, return the event

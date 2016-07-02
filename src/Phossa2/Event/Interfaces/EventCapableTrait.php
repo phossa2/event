@@ -48,11 +48,9 @@ trait EventCapableTrait
      * {@inheritDoc}
      */
     public function setEventManager(
-        EventManagerInterface $eventManager,
-        EventInterface $eventPrototype = null
+        EventManagerInterface $eventManager
     ) {
         $this->event_manager = $eventManager;
-        $this->event_proto = $eventPrototype;
         return $this;
     }
 
@@ -70,11 +68,20 @@ trait EventCapableTrait
     /**
      * {@inheritDoc}
      */
+    public function setEventPrototype(EventInterface $eventPrototype)
+    {
+        $this->event_proto = $eventPrototype;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function triggerEvent(
         /*# string */ $eventName,
         array $properties = []
     )/*# : EventInterface */ {
-        // create an event
+        // create an event with context $this
         $evt = $this->createEvent($eventName, $properties);
 
         // process it
