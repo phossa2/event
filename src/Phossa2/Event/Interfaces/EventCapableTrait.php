@@ -15,7 +15,7 @@
 namespace Phossa2\Event\Interfaces;
 
 use Phossa2\Event\Event;
-use Phossa2\Event\EventManager;
+use Phossa2\Event\EventDispatcher;
 
 /**
  * Implementation of EventCapableInterface
@@ -29,7 +29,7 @@ use Phossa2\Event\EventManager;
 trait EventCapableTrait
 {
     /**
-     * event manager
+     * event manager or dispatcher
      *
      * @var    EventManagerInterface
      * @access protected
@@ -62,7 +62,7 @@ trait EventCapableTrait
     public function getEventManager()/*# : EventManagerInterface */
     {
         if (is_null($this->event_manager)) {
-            $this->event_manager = new EventManager();
+            $this->event_manager = new EventDispatcher(__CLASS__);
         }
         return $this->event_manager;
     }
@@ -98,13 +98,13 @@ trait EventCapableTrait
     )/*# : EventInterface */ {
         // get event prototype
         if (is_null($this->event_proto)) {
-            $this->event_proto = new Event($eventName, $this);
+            return new Event($eventName, $this, $properties);
+        } else {
+            // clone the prototype
+            $evt = clone $this->event_proto;
+
+            // init the event and return it
+            return $evt($eventName, $this, $properties);
         }
-
-        // clone the prototype
-        $evt = clone $this->event_proto;
-
-        // init the event and return it
-        return $evt($eventName, $this, $properties);
     }
 }
