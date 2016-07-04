@@ -122,7 +122,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
      * Create a new event
      *
      * @param  string|EventInterface $eventName
-     * @param  object|string $context
+     * @param  object|string|null $context
      * @param  array $properties
      * @return EventInterface
      * @access protected

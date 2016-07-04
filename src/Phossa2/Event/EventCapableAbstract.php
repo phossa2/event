@@ -32,4 +32,12 @@ use Phossa2\Event\Interfaces\EventCapableInterface;
 abstract class EventCapableAbstract extends ObjectAbstract implements EventCapableInterface, ListenerInterface
 {
     use EventCapableTrait;
+
+    /**
+     * {@inherit}
+     */
+    public function eventsListening()/*# : array */
+    {
+        return [];
+    }
 }

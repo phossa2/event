@@ -40,7 +40,7 @@ interface EventInterface extends \ArrayAccess
      */
     public function __invoke(
         /*# string */ $eventName,
-        $context,
+        $context = null,
         array $properties = []
     );
 

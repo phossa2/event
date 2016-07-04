@@ -104,26 +104,18 @@ class Event extends ObjectAbstract implements EventInterface
      */
     public function __construct(
         /*# string */ $eventName,
-        $context,
+        $context = null,
         array $properties = []
     ) {
         $this->__invoke($eventName, $context, $properties);
     }
 
     /**
-     * Init this event
-     *
-     * @param  string $eventName
-     * @param  object|string $context
-     * @param  array $properties
-     * @return $this
-     * @throws InvalidArgumentException if arguments not right
-     * @access public
-     * @api
+     * {@inheritDoc}
      */
     public function __invoke(
         /*# string */ $eventName,
-        $context,
+        $context = null,
         array $properties = []
     ) {
         return $this->setName($eventName)
@@ -160,7 +152,8 @@ class Event extends ObjectAbstract implements EventInterface
      */
     public function setContext($context)
     {
-        if (is_object($context) ||
+        if (is_null($context) ||
+            is_object($context) ||
             is_string($context) && class_exists($context, false)) {
             $this->context = $context;
             return $this;
