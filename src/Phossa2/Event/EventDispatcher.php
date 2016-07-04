@@ -137,7 +137,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
         } else {
             unset($this->callable_map[$eventName]);
         }
-        return parent::off($eventName);
+        return parent::off($eventName, $callable);
     }
 
     /**
