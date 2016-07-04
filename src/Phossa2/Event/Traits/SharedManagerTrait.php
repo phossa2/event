@@ -118,13 +118,8 @@ trait SharedManagerTrait
 
         // loop thru own scopes
         foreach ($this->scopes as $scope) {
-            // add $scope to result
             $result[$scope] = true;
-
-            // scope is a type (class or interface)
-            if ($this->isAType($scope)) {
-                $this->matchParentType($scope, $allTypes, $result);
-            }
+            $this->matchParentType($scope, $allTypes, $result);
         }
 
         // alway add global scope
@@ -179,7 +174,9 @@ trait SharedManagerTrait
         array &$result
     )/*# : bool */ {
         foreach ($typesToCheck as $type) {
-            if (is_a($childType, $type, true)) {
+            if ($this->isAType($childType) &&
+                is_a($childType, $type, true)
+            ) {
                 $result[$type] = true;
             }
         }
