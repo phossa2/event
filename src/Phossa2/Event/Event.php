@@ -63,7 +63,7 @@ class Event extends ObjectAbstract implements EventInterface
      *
      * an object OR static class name (string)
      *
-     * @var    object|string
+     * @var    object|string|null
      * @access protected
      */
     protected $context;
@@ -96,7 +96,7 @@ class Event extends ObjectAbstract implements EventInterface
      * Constructor
      *
      * @param  string $eventName event name
-     * @param  string|object $context event context, object or static classname
+     * @param  string|object|null $context event context, object or classname
      * @param  array $properties (optional) event properties
      * @throws InvalidArgumentException if arguments not right
      * @access public
@@ -153,8 +153,8 @@ class Event extends ObjectAbstract implements EventInterface
     public function setContext($context)
     {
         if (is_null($context) ||
-            is_object($context) ||
-            is_string($context) && class_exists($context, false)) {
+            $this->isValidContext($context)
+        ) {
             $this->context = $context;
             return $this;
         }
@@ -285,5 +285,23 @@ class Event extends ObjectAbstract implements EventInterface
     public function offsetUnset($offset)
     {
         $this->setProperty($offset, null);
+    }
+
+    /**
+     * Is valid context
+     *
+     * @param  mixed $context
+     * @return bool
+     * @access protected
+     */
+    protected function isValidContext($context)/*# : bool */
+    {
+        if (is_object($context) ||
+            is_string($context) && class_exists($context, false)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

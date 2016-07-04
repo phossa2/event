@@ -22,7 +22,7 @@ use Phossa2\Event\Interfaces\EventManagerInterface;
 /**
  * EventManager
  *
- * A base implementation of EventManagerInterface
+ * A basic implementation of EventManagerInterface
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
@@ -73,7 +73,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
                 $this->events[$eventName]->remove($callable);
             }
 
-            // unset if empty
+            // when count is zeror, remove queue
             if (count($this->events[$eventName]) === 0) {
                 unset($this->events[$eventName]);
             }
@@ -95,7 +95,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
         // walk thru the queue
         foreach ($queue as $q) {
             // execute the handler
-            $result = $q['data']($evt);
+            $q['data']($evt);
 
             // break out if event stopped
             if ($evt->isPropagationStopped()) {

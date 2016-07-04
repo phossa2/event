@@ -50,9 +50,7 @@ trait NameGlobbingTrait
     )/*# : array */ {
         $result = [];
         foreach ($names as $name) {
-            if ($name === '*' || $name === $eventName || '' === $eventName) {
-                $result[] = $name;
-            } elseif ($this->matchEventName($name, $eventName)) {
+            if ($this->matchEventName($name, $eventName)) {
                 $result[] = $name;
             }
         }
@@ -83,11 +81,13 @@ trait NameGlobbingTrait
         /*# string */ $name,
         /*# string */ $eventName
     )/*# : bool */ {
-        // '*' found
-        if (false !== strpos($name, '*')) {
+        if ('*' === $name || $name === $eventName) {
+            return true;
+        } elseif (false !== strpos($name, '*')) {
             $pat = str_replace(array('.', '*'), array('[.]', '[^.]*+'), $name);
             return (bool) preg_match('~^' . $pat . '$~', $eventName);
+        } else {
+            return false;
         }
-        return false;
     }
 }

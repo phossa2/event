@@ -49,7 +49,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
     /**
      * event prototype
      *
-     * @var    EventInterface
+     * @var    EventInterface|null
      * @access protected
      */
     protected $event_proto;
@@ -71,7 +71,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
      */
     public function __construct(
         $scopes = '',
-        EventInterface $event_proto
+        EventInterface $event_proto = null
     ) {
         // set scopes
         if ('' !== $scopes) {

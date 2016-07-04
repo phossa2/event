@@ -90,7 +90,7 @@ trait ListenerAwareTrait
     /**
      * standardize events definition
      *
-     * @param  array $eventsDefinition
+     * @param  ListenerInterface $listener
      * @return array
      * @access protected
      */
@@ -112,8 +112,6 @@ trait ListenerAwareTrait
     /**
      * standardize to array of 'method1' or ['method1', 20]
      *
-     * @param  ListenerInterface $listener
-     * @param  string $eventName
      * @param  mixed $data
      * @return array
      * @access protected
@@ -129,7 +127,7 @@ trait ListenerAwareTrait
         } else {
             $result = $data;
         }
-        return $result;
+        return (array) $result;
     }
 
     /**

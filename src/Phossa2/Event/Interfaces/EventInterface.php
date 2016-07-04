@@ -31,7 +31,7 @@ interface EventInterface extends \ArrayAccess
      * Initialize this event
      *
      * @param  string $eventName
-     * @param  object|string $context originator object or static classname
+     * @param  object|string|null $context originator object or static classname
      * @param  array $properties
      * @return $this
      * @throws InvalidArgumentException if argument[s] not right
@@ -67,7 +67,7 @@ interface EventInterface extends \ArrayAccess
     /**
      * Set event context, usually an object or static class name
      *
-     * @param  object|string $context object or static classname
+     * @param  object|string|null $context object or static classname
      * @return $this
      * @throws InvalidArgumentException if $context not right
      * @access public
@@ -78,7 +78,7 @@ interface EventInterface extends \ArrayAccess
     /**
      * Get event context, usually an object or static class name
      *
-     * @return object|string
+     * @return object|string|null
      * @access public
      * @api
      */

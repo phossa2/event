@@ -113,11 +113,7 @@ trait SharedManagerTrait
         // loop thru own scopes
         foreach ($this->scopes as $scope) {
             $result[$scope] = true;
-            foreach ($allScopes as $class) {
-                if ($this->isSubType($scope, $class)) {
-                    $result[$class] = true;
-                }
-            }
+            $this->isSubType($scope, $allScopes, $result);
         }
 
         // alway add global scope
@@ -139,20 +135,27 @@ trait SharedManagerTrait
     }
 
     /**
-     * is $childType child type of $parentType
+     * is $childType child type of one of the $typesToCheck.
+     *
+     * Returns the matched types
      *
      * @param  string $childType
-     * @param  string $parentType
-     * @return bool
+     * @param  array $typesToCheck
+     * @param  array &$result
      * @access protected
      */
     protected function isSubType(
         /*# string */ $childType,
-        /*# string */ $parentType
+        array $typesToCheck,
+        array &$result
     )/*# : bool */ {
-        return
-            $this->isAType($childType) &&
-            $this->isAType($parentType) &&
-            is_a($childType, $parentType, true);
+        foreach ($typesToCheck as $type) {
+            if ($this->isAType($childType) &&
+                $this->isAType($type) &&
+                is_a($childType, $type, true)
+            ) {
+                $result[$type] = true;
+            }
+        }
     }
 }
