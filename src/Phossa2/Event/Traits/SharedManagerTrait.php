@@ -12,9 +12,10 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa2\Event\Interfaces;
+namespace Phossa2\Event\Traits;
 
 use Phossa2\Shared\Shareable\ShareableTrait;
+use Phossa2\Event\Interfaces\EventManagerInterface;
 
 /**
  * SharedManagerTrait
@@ -84,6 +85,7 @@ trait SharedManagerTrait
         callable $callable,
         /*# int */ $priority = 50
     ) {
+        // scope '' means GLOBAL
         static::onEvent('', $eventName, $callable, $priority);
     }
 
@@ -94,11 +96,15 @@ trait SharedManagerTrait
         /*# string */ $eventName,
         callable $callable = null
     ) {
+        // scope '' means GLOBAL
         static::offEvent('', $eventName, $callable);
     }
 
     /**
      * Override `getOwnScopes()` in ShareableTrait
+     *
+     * For $this's own scopes, looking for any parent class or interface in
+     * all the available scopes.
      *
      * {@inheritDoc}
      */

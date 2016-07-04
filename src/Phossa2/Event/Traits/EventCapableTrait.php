@@ -12,10 +12,14 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa2\Event\Interfaces;
+namespace Phossa2\Event\Traits;
 
 use Phossa2\Event\Event;
 use Phossa2\Event\EventDispatcher;
+use Phossa2\Event\Interfaces\EventInterface;
+use Phossa2\Event\Interfaces\ListenerInterface;
+use Phossa2\Event\Interfaces\EventManagerInterface;
+use Phossa2\Event\Interfaces\ListenerAwareInterface;
 
 /**
  * Implementation of EventCapableInterface

@@ -15,8 +15,8 @@
 namespace Phossa2\Event;
 
 use Phossa2\Shared\Base\ObjectAbstract;
+use Phossa2\Event\Traits\EventCapableTrait;
 use Phossa2\Event\Interfaces\ListenerInterface;
-use Phossa2\Event\Interfaces\EventCapableTrait;
 use Phossa2\Event\Interfaces\EventCapableInterface;
 
 /**

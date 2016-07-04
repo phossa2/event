@@ -15,10 +15,10 @@
 namespace Phossa2\Event;
 
 use Phossa2\Event\Interfaces\EventInterface;
-use Phossa2\Event\Interfaces\NameGlobbingTrait;
-use Phossa2\Event\Interfaces\SharedManagerTrait;
-use Phossa2\Event\Interfaces\ListenerAwareTrait;
-use Phossa2\Event\Interfaces\StaticManagerTrait;
+use Phossa2\Event\Traits\NameGlobbingTrait;
+use Phossa2\Event\Traits\SharedManagerTrait;
+use Phossa2\Event\Traits\ListenerAwareTrait;
+use Phossa2\Event\Traits\StaticManagerTrait;
 use Phossa2\Event\Interfaces\CountableInterface;
 use Phossa2\Event\Interfaces\SharedManagerInterface;
 use Phossa2\Event\Interfaces\ListenerAwareInterface;

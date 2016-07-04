@@ -12,10 +12,9 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa2\Event\Interfaces;
+namespace Phossa2\Event\Traits;
 
 use Phossa2\Event\Message\Message;
-use Phossa2\Event\EventDispatcher;
 use Phossa2\Event\Exception\BadMethodCallException;
 
 /**
@@ -42,7 +41,7 @@ trait StaticManagerTrait
      */
     public static function __callStatic($name, array $arguments)
     {
-        /* @var $mgr EventDispatcher */
+        // get a shared event manager in scope __STATIC__
         $mgr = static::getShareable('__STATIC__');
 
         if (method_exists($mgr, $name)) {

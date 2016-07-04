@@ -12,7 +12,7 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa2\Event\Interfaces;
+namespace Phossa2\Event\Traits;
 
 /**
  * Matching event name
