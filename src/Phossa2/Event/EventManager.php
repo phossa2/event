@@ -61,10 +61,12 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
      * {@inheritDoc}
      */
     public function off(
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     ) {
-        if ($this->hasEventQueue($eventName)) {
+        if ('' === $eventName) {
+            $this->events = [];
+        } elseif ($this->hasEventQueue($eventName)) {
             if (null === $callable) {
                 // remove all
                 $this->events[$eventName]->flush();

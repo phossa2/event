@@ -57,6 +57,8 @@ interface EventManagerInterface
     /**
      * Unbind a callable from a specific eventName
      *
+     * If $eventName == '', turn off all events
+     *
      * @param  string $eventName
      * @param  callable $callable
      * @return $this
@@ -64,7 +66,7 @@ interface EventManagerInterface
      * @api
      */
     public function off(
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     );
 

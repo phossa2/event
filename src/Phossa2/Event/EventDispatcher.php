@@ -18,7 +18,6 @@ use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Traits\NameGlobbingTrait;
 use Phossa2\Event\Traits\SharedManagerTrait;
 use Phossa2\Event\Traits\ListenerAwareTrait;
-use Phossa2\Event\Traits\StaticManagerTrait;
 use Phossa2\Event\Interfaces\CountableInterface;
 use Phossa2\Event\Interfaces\SharedManagerInterface;
 use Phossa2\Event\Interfaces\ListenerAwareInterface;
@@ -31,7 +30,6 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  * - event name globbing
  * - shared manager support
  * - attach/detach listener
- * - use as a event manager statically
  * - able to trigger an event with countable times
  *
  * @package Phossa2\Event
@@ -43,8 +41,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
 {
     use NameGlobbingTrait,
         SharedManagerTrait,
-        ListenerAwareTrait,
-        StaticManagerTrait;
+        ListenerAwareTrait;
 
     /**
      * event prototype
@@ -128,7 +125,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
      * {@inheritDoc}
      */
     public function off(
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     ) {
         if (null !== $callable) {
@@ -137,11 +134,10 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
                 $callable = $this->callable_map[$eventName][$oid];
                 unset($this->callable_map[$eventName][$oid]);
             }
-            return parent::off($eventName, $callable);
         } else {
             unset($this->callable_map[$eventName]);
-            return parent::off($eventName);
         }
+        return parent::off($eventName);
     }
 
     /**
@@ -178,6 +174,9 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
     )/*# : EventQueueInterface */ {
         // get all shared managers
         $managers = $this->getShareables();
+
+        // add $this manager
+        array_unshift($managers, $this);
 
         /* @var $mgr EventDispatcher */
         $nqueue = $this->newEventQueue();
