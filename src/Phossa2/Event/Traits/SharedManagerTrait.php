@@ -113,13 +113,18 @@ trait SharedManagerTrait
         // result
         $result = [];
 
-        // all scopes avaible
-        $allScopes = static::getScopes();
+        // all types avaible
+        $allTypes = $this->getAllTypes(static::getScopes());
 
         // loop thru own scopes
         foreach ($this->scopes as $scope) {
+            // add $scope to result
             $result[$scope] = true;
-            $this->isSubType($scope, $allScopes, $result);
+
+            // scope is a type (class or interface)
+            if ($this->isAType($scope)) {
+                $this->matchParentType($scope, $allTypes, $result);
+            }
         }
 
         // alway add global scope
@@ -141,6 +146,24 @@ trait SharedManagerTrait
     }
 
     /**
+     * Get all types (class or interface) from the given scopes
+     *
+     * @param  array $scopes
+     * @return array
+     * @access protected
+     */
+    protected function getAllTypes(array $scopes)/*# : array */
+    {
+        $result = [];
+        foreach ($scopes as $scope) {
+            if ($this->isAType($scope)) {
+                $result[] = $scope;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * is $childType child type of one of the $typesToCheck.
      *
      * Returns the matched types
@@ -150,16 +173,13 @@ trait SharedManagerTrait
      * @param  array &$result
      * @access protected
      */
-    protected function isSubType(
+    protected function matchParentType(
         /*# string */ $childType,
         array $typesToCheck,
         array &$result
     )/*# : bool */ {
         foreach ($typesToCheck as $type) {
-            if ($this->isAType($childType) &&
-                $this->isAType($type) &&
-                is_a($childType, $type, true)
-            ) {
+            if (is_a($childType, $type, true)) {
                 $result[$type] = true;
             }
         }

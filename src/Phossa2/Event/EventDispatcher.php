@@ -179,22 +179,11 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
         // get all shared managers
         $managers = $this->getShareables();
 
-        // one new queue
-        $nqueue = $this->newEventQueue();
-
         /* @var $mgr EventDispatcher */
+        $nqueue = $this->newEventQueue();
         foreach ($managers as $mgr) {
-            // find $eventName related names in $mgr
-            $matchedNames = $mgr->globEventNames(
-                $eventName, $mgr->getEventNames()
-            );
-
-            // combined event queue from each $mgr
-            $nqueue = $nqueue->combine(
-                $mgr->matchEventQueues($matchedNames)
-            );
+            $nqueue = $nqueue->combine($mgr->matchEventQueues($eventName));
         }
-
         return $nqueue;
     }
 
@@ -210,16 +199,17 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
     }
 
     /**
-     * Get a merged queue in $this manager for event names provided
+     * Get a merged queue in $this manager for the given event name
      *
-     * @param  array $names
+     * @param  string $eventName
      * @return EventQueueInterface
      * @access protected
      */
     protected function matchEventQueues(
-        /*# array */ $names
+        /*# string */ $eventName
     )/*: EventQueueInterface */ {
         $nqueue = $this->newEventQueue();
+        $names  = $this->globEventNames($eventName, $this->getEventNames());
         foreach ($names as $evtName) {
             if ($this->hasEventQueue($evtName)) {
                 $nqueue = $nqueue->combine($this->events[$evtName]);
