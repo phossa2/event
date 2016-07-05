@@ -1,5 +1,6 @@
 <?php
 
+use Phossa2\Event\Event;
 use Phossa2\Event\EventCapableAbstract;
 
 interface MyInterface
@@ -20,4 +21,9 @@ class MyClass extends EventCapableAbstract implements MyInterface
             'afterTest' => 'myMethod'
         ];
     }
+}
+
+class MyEvent extends Event
+{
+
 }

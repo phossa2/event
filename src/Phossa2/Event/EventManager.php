@@ -49,7 +49,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
         callable $callable,
         /*# int */ $priority = 50
     ) {
-        if (!$this->hasEventQueue($eventName)) {
+        if (!$this->hasEvent($eventName)) {
             $this->events[$eventName] = $this->newEventQueue();
         }
         $this->events[$eventName]->insert($callable, $priority);
@@ -69,8 +69,8 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
             $this->events = [];
 
         // dealing with one event
-        } elseif ($this->hasEventQueue($eventName)) {
-            $this->removeEvent($eventName, $callable);
+        } elseif ($this->hasEvent($eventName)) {
+            $this->removeEventCallable($eventName, $callable);
         }
         return $this;
     }
@@ -101,13 +101,13 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
     }
 
     /**
-     * Has $eventName been defined ?
+     * Has $eventName been bound ?
      *
      * @param  string $eventName
      * @return bool
      * @access protected
      */
-    protected function hasEventQueue(/*# string */ $eventName)/*# : bool */
+    protected function hasEvent(/*# string */ $eventName)/*# : bool */
     {
         return isset($this->events[$eventName]);
     }
@@ -154,7 +154,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
     protected function getMatchedQueue(
         /*# : string */ $eventName
     )/*# : EventQueueInterface */ {
-        if ($this->hasEventQueue($eventName)) {
+        if ($this->hasEvent($eventName)) {
             return $this->events[$eventName];
         } else {
             return $this->newEventQueue();
@@ -168,7 +168,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
      * @param  callable|null $callable
      * @access protected
      */
-    protected function removeEvent(
+    protected function removeEventCallable(
         /*# string */ $eventName,
         $callable
     ) {

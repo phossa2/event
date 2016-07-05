@@ -45,7 +45,7 @@ class EventQueueTest
 
         // 1
         $this->object->insert([$this->object, 'count'], 10);
-        $this->assertTrue(1 === $this->object->count());
+        $this->assertTrue(1 === count($this->object));
     }
 
     /**
@@ -77,13 +77,13 @@ class EventQueueTest
     {
         // insert callable
         $this->object->insert([$this->object, 'count'], 10);
-        $this->assertTrue(1 === $this->object->count());
+        $this->assertTrue(1 === count($this->object));
 
         // insert another callable
         $this->object->insert([$this->object, 'flush'], 70);
-        $this->assertTrue(2 === $this->object->count());
+        $this->assertTrue(2 === count($this->object));
 
-        // insert callable one again (replacing)
+        // insert callable one again (adjust priority only)
         $this->object->insert([$this->object, 'count'], 50);
         $this->assertTrue(2 === $this->object->count());
     }
@@ -122,9 +122,9 @@ class EventQueueTest
     {
         $callable = [$this->object, 'count'];
         $this->object->insert($callable, 10);
-        $this->assertTrue(1 === $this->object->count());
+        $this->assertTrue(1 === count($this->object));
         $this->object->remove($callable);
-        $this->assertTrue(0 === $this->object->count());
+        $this->assertTrue(0 === count($this->object));
     }
 
     /**
@@ -134,9 +134,9 @@ class EventQueueTest
     {
         $callable = [$this->object, 'count'];
         $this->object->insert($callable, 10);
-        $this->assertTrue(1 === $this->object->count());
+        $this->assertTrue(1 === count($this->object));
         $this->object->flush();
-        $this->assertTrue(0 === $this->object->count());
+        $this->assertTrue(0 === count($this->object));
     }
 
     /**

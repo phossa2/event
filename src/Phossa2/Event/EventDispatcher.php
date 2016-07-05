@@ -210,7 +210,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
         $nqueue = $this->newEventQueue();
         $names  = $this->globEventNames($eventName, $this->getEventNames());
         foreach ($names as $evtName) {
-            if ($this->hasEventQueue($evtName)) {
+            if ($this->hasEvent($evtName)) {
                 $nqueue = $nqueue->combine($this->events[$evtName]);
             }
         }

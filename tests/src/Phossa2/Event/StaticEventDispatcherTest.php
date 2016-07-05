@@ -24,6 +24,17 @@ class StaticEventDispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test default event manager
+     *
+     * @covers Phossa2\Event\StaticEventDispatcher::getEventManager
+     */
+    public function testGetEventManager()
+    {
+        $events = StaticEventDispatcher::getEventManager();
+        $this->assertEquals('__STATIC__', $events->isShareable());
+    }
+
+    /**
      * @covers Phossa2\Event\StaticEventDispatcher::setEventManager
      * @covers Phossa2\Event\StaticEventDispatcher::getEventManager
      */

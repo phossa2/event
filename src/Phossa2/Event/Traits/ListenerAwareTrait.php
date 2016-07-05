@@ -179,7 +179,7 @@ trait ListenerAwareTrait
         }
     }
 
-    // from other trait
+    // from EventManagerInterface
     abstract public function on(/*# string */ $eventName, callable $callable, /*# int */ $priority = 50);
-    abstract public function off(/*# string */ $eventName, callable $callable);
+    abstract public function off(/*# string */ $eventName = '', callable $callable = null);
 }

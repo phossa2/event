@@ -67,7 +67,7 @@ trait SharedManagerTrait
      */
     public static function offEvent(
         $scope,
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     ) {
         foreach ((array) $scope as $sc) {
@@ -93,7 +93,7 @@ trait SharedManagerTrait
      * {@inheritDoc}
      */
     public static function offGlobalEvent(
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     ) {
         // scope '' means GLOBAL

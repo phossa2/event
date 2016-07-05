@@ -38,12 +38,15 @@ Features
 
 - Event name [globbing](#glob).
 
-- Built-in [shared event manager](#shared) support.
+- Built-in *multiple* [shared event managers](#shared) support.
+
+- [Attach and detach](#attach) listeners.
 
 - [Static event manager](#static) support.
 
-- [Class level](#class) events support.
+- Built-in [class level](#class) events support.
 
+- Able to [limit](#limit) number of times of an event callable executed.
 
 Usage
 ---
@@ -53,13 +56,16 @@ Usage
   ```php
   use Phossa2\Event\EventDispatcher;
 
-  // event dispatcher(manager)
+  // event dispatcher
   $events = new EventDispatcher();
 
-  // bind event with a callable
+  // bind event with a callback
   $events->on('login.success', function($evt) {
       echo "logged in as ". $evt->getProperty('username');
   });
+
+  // bind event with a callable
+  $events->on('login.attempt', [$logger, 'logEvent']);
 
   // unbind an event
   $events->off('login.attempt');
@@ -70,8 +76,8 @@ Usage
 
 - <a name="glob"></a>Event name globbing
 
-  Event name globbing means callables of the binding of 'login.*' will also be
-  fired when event 'login.success' is being triggered.
+  Event name globbing means callables of the binding 'login.*' will also be
+  triggered when triggering event 'login.success'.
 
   ```php
   // bind 'login.*' with callables
@@ -79,38 +85,42 @@ Usage
       echo $evt->getName();
   });
 
-  // trigger 'login.atttempt' will also trigger callables of 'loing.*'
+  // trigger 'login.atttempt' will also trigger callables of 'login.*'
   $events->trigger('login.attempt');
   ```
 
   The globbing rules are similiar to the PHP function `glob()`, where
 
-  - `*` in the string means any chars except for the dot
+  - `*` in the string means any chars except the dot
 
   - `.` means the dot.
 
-  - a single char `*` means match any string.
+  - one-char-string `*` means match any string (including the dot).
 
   **Note** Name globbing only happens when event is being triggered. Binding
-  or unbinding events only affect the exact event name.
+  or unbinding events only affect the *EXACT* event name.
 
   ```php
-  // unbind the exact 'login.*', not other login related events
+  // unbind the exact 'login.*'
   $events->off('login.*');
   ```
 
 - <a name="shared"></a>Shared event manager support
 
-  Class `EventDispatcher` has built-in support for shared event manager.
+  Class `EventDispatcher` implements the `Phossa2\Shared\Shareable\ShareableInterface`.
+
+  `ShareableInterface` is an extended version of `Singleton`. Instead of
+  supporting only *ONE* shared instance, `ShareableInterface` may have shared
+  instance for different `scope`.
 
   ```php
-  // '' is the global scope
+  // global manager, global scope is ''
   $globalEvents = EventDispatcher::getShareable();
 
-  // another shared event manager in scope 'MVC'
+  // shared event manager in scope 'MVC'
   $mvcEvents = EventDispatcher::getShareable('MVC');
 
-  // create a event manager instance in scope MVC
+  // create a event manager INSTANCE, which has scope 'MVC'
   $events = new EventDispatcher('MVC');
 
   // in scope MVC ?
@@ -120,8 +130,8 @@ Usage
   var_dump($events->hasScope()); // true
   ```
 
-  Callables bound to a shared manager will also be triggered if an event manager
-  instance falls in the same scope.
+  Callables bound to a shared manager will also be triggered if an event
+  manager instance has the same scope.
 
   ```php
   // bind with pirority 100 (last executed)
@@ -129,7 +139,7 @@ Usage
       echo "mvc";
   }, 100);
 
-  // create a new instance in the MVC scope
+  // create a new instance with the MVC scope
   $events = new EventDispatcher('MVC');
 
   // bind with default priority 50
@@ -141,26 +151,90 @@ Usage
   $events->trigger("test");
   ```
 
-  Static methods are provided for on/off/trigger events with shared managers.
+  Event manager instance can have multiple scopes, either specified during
+  the instantiation or using `addScope()`.
 
   ```php
-  // bind to global scope
-  EventDispatcher::onEvent('', 'login.success', function() {});
+  // create an event manager with 2 scopes
+  $events = new EventDispatcher(['MVC', 'AnotherScope']);
 
-  // interface as the scope
+  // add another scope
+  $events->addScope('thirdScope');
+  ```
+
+  Couple of helper methods are provided for on/off/trigger events with shared
+  managers.
+
+  ```php
+  // bind a callable to global event manager
+  EventDispatcher::onGlobalEvent('login.success', function() {});
+
+  // use interface name as a scope
   EventDispatcher::onEvent(
       'Psr\\Log\\LoggerInterface',
       'log.error',
       function () {}
   );
 
-  // unbind events on global scope
-  EventDispatcher::offEvent('');
+  // unbind all callables of event 'log.error' in a scope
+  EventDispatcher::offEvent(
+      'Psr\\Log\\LoggerInterface',
+      'log.error'
+  );
+
+  // unbind ALL events in global scope
+  EventDispatcher::offGlobalEvent();
+  ```
+
+- <a name="attach"></a>Attaching a listener
+
+  `Listener` implements the `ListenerInterface`. Or in short, provides a
+  method `eventsListening()`.
+
+  ```php
+  use Phossa2\Event\Interfaces\ListenerInterface;
+
+  class myListener implements ListenerInterface
+  {
+      public function eventsListening()
+      {
+          return [
+              // one method of $this
+              eventName1 => 'method1',
+
+              // 2 methods
+              eventName2 => ['callable1, 'method2'],
+
+              // priority 20 and in a scope
+              eventName2 => ['method2', 20, 'mvcScope'], // with priority 20
+
+              eventName3 => [
+                  ['method3', 50],
+                  ['method4', 70, 'anotherScope']
+              ]
+          ];
+      }
+  }
+  ```
+
+  `EventDispatcher::attachListener()` can be used to bind events defined in
+  `eventsListening()` instead of using `EventDispatcher::on()` to bind each
+  event manually.
+
+  ```php
+  $events = new EventDispatcher();
+
+  $listener = new \myListener();
+
+  $events->attachListener($listener);
+
+  // will call $listener->method1()
+  $events->trigger('eventName1');
   ```
 
 - <a name="static"></a>Using event manager statically
 
-  `StaticEventDispatcher` is the static wrapper for an `EventDispatcher`.
+  `StaticEventDispatcher` is a static wrapper for an `EventDispatcher` slave.
 
   ```php
   StaticEventDispatcher::on('*', function($evt) {
@@ -171,21 +245,73 @@ Usage
   StaticEventDispatcher::trigger('test');
   ```
 
-  **Note** Do not confuse the global event manager with `StaticEventDispatcher`.
+  `StaticEventDispatcher` is not the same as global event manager.
+  `StaticEventDispatcher` has a default slave which is a shared event manager
+  in scope `'__STATIC__'`. While global event manager is the shared event
+  manager in global scope `''`.
+
+  User may set another event manager to replace the default slave.
+
+  ```php
+  StaticEventDispatcher::setEventManager(new EventDispatcher());
+  ```
+
+- `EventCapableAbstract`
+
+  `EventCapableAbstract` implements both `ListenerInterface` and
+  `EventCapableInterface`. It will do the following when `triggerEvent()`
+  is called,
+
+  - Get the event manager. If it is not set yet, create one default event
+    manager with its classname as scope.
+
+  - Attach events defined in `eventsListening()` if not yet.
+
+  - Trigger the event and processed by the event manager and all of the
+    shared managers of its scopes.
+
+  ```php
+  class LoginController extends EventCapableAbstract
+  {
+      public function login() {
+
+          $evt = $this->triggerEvent('login.pre');
+
+          // failed
+          if ($evt->isPropergationStopped()) {
+              return;
+          }
+
+          // ...
+      }
+
+      public function beforeLogin() {
+          // ...
+      }
+
+      public function eventsListening()
+      {
+          return [
+              'login.pre' => 'beforeLogin'
+          ];
+      }
+  }
+  ```
 
 - <a name="class"></a>Class or interface level events support
 
-  If using class or interface name as the scope, events can be bound to this
-  specific class or interface.
+  Class or interface name can be used as the `scope`. When events bound to these
+  kind of scopes, any events triggered by child class will also search callables
+  defined in these class/interface level shared event managers.
 
   ```php
-  // shared event manager for interface 'MyInterface'
-  EventDispatcher::getShareable('MyInterface')->on('*', function() {
-     echo "MyInterface";
-  }, 60);
+  // define event '*' for interface 'MyInterface'
+  EventDispatcher::onEvent(
+      'MyInterface', '*', function() { echo "MyInterface"; }, 60
+  );
   ```
 
-  `EventCapableAbstract` is a base class for any event capable classes.
+  Extends `EventCapableAbstract`.
 
   ```php
   class MyClass extends EventCapableAbstract implements MyInterface
@@ -206,12 +332,29 @@ Usage
 
   $obj = new MyClass();
 
-  // will print 'myMethodMyInterface'
+  // will trigger callable 'myMethod' and callables in MyInterface
   $obj->triggerEvent('afterTest');
+  ```
+
+- <a name="limit"></a>Execute callable for limited times
+
+  ```php
+  // bind a callable for executing only once
+  $dispatcher->one('user.login', function(Event $evt) {
+      // ...
+  });
+
+  // allow 3 times
+  $dispatcher->many(3, 'user.tag', function(Event $evt) {
+      // ...
+  });
   ```
 
 APIs
 ---
+
+- `Events` related.
+
 
 
 Dependencies

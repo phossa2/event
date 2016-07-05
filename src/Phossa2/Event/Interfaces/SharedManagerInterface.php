@@ -70,7 +70,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      */
     public static function offEvent(
         $scope,
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     );
 
@@ -104,7 +104,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      * @api
      */
     public static function offGlobalEvent(
-        /*# string */ $eventName,
+        /*# string */ $eventName = '',
         callable $callable = null
     );
 }
