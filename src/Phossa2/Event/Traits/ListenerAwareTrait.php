@@ -20,7 +20,8 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
 /**
  * ListenerAwareTrait
  *
- * Implementation of ListenerAwareInterface
+ * Implementation of ListenerAwareInterface with scope (shared manager)
+ * support.
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
@@ -31,14 +32,6 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
 trait ListenerAwareTrait
 {
     /**
-     * cache for listeners' event handlers
-     *
-     * @var    array
-     * @access protected
-     */
-    protected $listener_cache = [];
-
-    /**
      * {@inheritDoc}
      */
     public function attachListener(ListenerInterface $listener)
@@ -48,7 +41,13 @@ trait ListenerAwareTrait
 
         // add to manager's event pool
         foreach ($events as $handler) {
-            $this->on($handler[0], $handler[1], $handler[2]);
+            if (null !== $handler[3]) {
+                /* @var $em EventManagerInterface */
+                $em = static::getShareable($handler[3]);
+                $em->on($handler[0], $handler[1], $handler[2]);
+            } else {
+                $this->on($handler[0], $handler[1], $handler[2]);
+            }
         }
         return $this;
     }
@@ -66,28 +65,11 @@ trait ListenerAwareTrait
         // try find the match
         foreach ($events as $handler) {
             if ('' == $eventName || $handler[0] === $eventName) {
-                $this->off($handler[0], $handler[1]);
+                $this->offListenerEvent($handler);
             }
         }
 
         return $this;
-    }
-
-    /**
-     * Get cached listener events (fixed already)
-     *
-     * @param  ListenerInterface $listener
-     * @return array
-     * @access protected
-     */
-    protected function listenerEvents(
-        ListenerInterface $listener
-    )/*# : array */ {
-        $oid = spl_object_hash($listener);
-        if (!isset($this->listener_cache[$oid])) {
-            $this->listener_cache[$oid] = $this->fixListenerEvents($listener);
-        }
-        return $this->listener_cache[$oid];
     }
 
     /**
@@ -97,7 +79,7 @@ trait ListenerAwareTrait
      * @return array
      * @access protected
      */
-    protected function fixListenerEvents(
+    protected function listenerEvents(
         ListenerInterface $listener
     )/*# : array */ {
         $result = [];
@@ -134,8 +116,8 @@ trait ListenerAwareTrait
     }
 
     /**
-     * standardize one 'method1' or ['method1', 20]
-     * to [eventName, callable, priority]
+     * standardize one 'method1' or ['method1', 20, $scope]
+     * to [eventName, callable, priority, $scopeIfAny]
      *
      * @param  ListenerInterface $listener
      * @param  string $eventName
@@ -151,11 +133,13 @@ trait ListenerAwareTrait
         if (is_array($data) && is_int($data[1])) {
             $callable = $this->expandCallable($listener, $data[0]);
             $priority = $data[1];
+            $scope = isset($data[2]) ? $data[2] : null;
         } else {
             $callable = $this->expandCallable($listener, $data);
             $priority = 50;
+            $scope = null;
         }
-        return [$eventName, $callable, $priority];
+        return [$eventName, $callable, $priority, $scope];
     }
 
     /**
@@ -174,6 +158,24 @@ trait ListenerAwareTrait
             return $callable;
         } else {
             return [$listener, $callable];
+        }
+    }
+
+    /**
+     * off listener event [$eventName, $handler, $priority, $scope]
+     *
+     * @param  array $data
+     * @access protected
+     */
+    protected function offListenerEvent(array $data)
+    {
+        // scope found
+        if (null !== $data[3]) {
+            /* @var $em EventManagerInterface */
+            $em = static::getShareable($data[3]);
+            $em->off($data[0], $data[1]);
+        } else {
+            $this->off($data[0], $data[1]);
         }
     }
 

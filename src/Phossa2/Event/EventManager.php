@@ -64,21 +64,13 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
         /*# string */ $eventName = '',
         callable $callable = null
     ) {
+        // remove all events
         if ('' === $eventName) {
             $this->events = [];
-        } elseif ($this->hasEventQueue($eventName)) {
-            if (null === $callable) {
-                // remove all
-                $this->events[$eventName]->flush();
-            } else {
-                // remove callable
-                $this->events[$eventName]->remove($callable);
-            }
 
-            // when count is zeror, remove queue
-            if (count($this->events[$eventName]) === 0) {
-                unset($this->events[$eventName]);
-            }
+        // dealing with one event
+        } elseif ($this->hasEventQueue($eventName)) {
+            $this->removeEvent($eventName, $callable);
         }
         return $this;
     }
@@ -166,6 +158,31 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
             return $this->events[$eventName];
         } else {
             return $this->newEventQueue();
+        }
+    }
+
+    /**
+     * Remove event or its callable
+     *
+     * @param  string $eventName
+     * @param  callable|null $callable
+     * @access protected
+     */
+    protected function removeEvent(
+        /*# string */ $eventName,
+        $callable
+    ) {
+        if (null === $callable) {
+            // remove all callables
+            $this->events[$eventName]->flush();
+        } else {
+            // remove one callable
+            $this->events[$eventName]->remove($callable);
+        }
+
+        // when count is zeror, remove queue
+        if (count($this->events[$eventName]) === 0) {
+            unset($this->events[$eventName]);
         }
     }
 }

@@ -34,12 +34,18 @@ interface ListenerInterface
      * public function eventsListening()
      * {
      *     return [
-     *         eventName1 => 'method1', // method1 of $this
+     *         // one method of $this
+     *         eventName1 => 'method1',
+     *
+     *         // 2 methods
      *         eventName2 => ['callable1, 'method2'],
-     *         eventName2 => ['method2', 20], // with priority 20
+     *
+     *         // priority 20 and in a scope
+     *         eventName2 => ['method2', 20, 'mvcScope'], // with priority 20
+     *
      *         eventName3 => [
      *             ['method3', 50],
-     *             ['method4', 70]
+     *             ['method4', 70, 'anotherScope']
      *         ]
      *     ];
      * }
