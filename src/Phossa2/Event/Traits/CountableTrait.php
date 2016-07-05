@@ -110,4 +110,7 @@ trait CountableTrait
     {
         return spl_object_hash((object) $callable);
     }
+
+    // from EventManagerInterface
+    abstract public function on(/*# string */ $eventName, callable $callable, /*# int */ $priority = 50);
 }
