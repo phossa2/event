@@ -14,8 +14,9 @@
 
 namespace Phossa2\Event;
 
-use Phossa2\Event\Interfaces\EventInterface;
+use Phossa2\Event\Traits\CountableTrait;
 use Phossa2\Event\Traits\NameGlobbingTrait;
+use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Traits\SharedManagerTrait;
 use Phossa2\Event\Traits\ListenerAwareTrait;
 use Phossa2\Event\Interfaces\CountableInterface;
@@ -39,7 +40,8 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  */
 class EventDispatcher extends EventManager implements SharedManagerInterface, ListenerAwareInterface, CountableInterface
 {
-    use NameGlobbingTrait,
+    use CountableTrait,
+        NameGlobbingTrait,
         SharedManagerTrait,
         ListenerAwareTrait;
 
@@ -50,14 +52,6 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
      * @access protected
      */
     protected $event_proto;
-
-    /**
-     * callable mapping
-     *
-     * @var    callable[];
-     * @access protected
-     */
-    protected $callable_map = [];
 
     /**
      * Create a event manager with defined scopes
@@ -77,67 +71,6 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
 
         // set event prototype
         $this->event_proto = $event_proto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function many(
-        /*# int */ $times,
-        /*# string */ $eventName,
-        callable $callable,
-        /*# int */ $priority = 50
-    ) {
-        // wrap the callable
-        $wrapper = function (EventInterface $event) use ($callable, $times) {
-            static $cnt = 0;
-            if ($cnt++ < $times) {
-                call_user_func($callable, $event);
-            }
-        };
-
-        // mapping callable
-        $oid = $this->hashCallable($callable);
-        $this->callable_map[$eventName][$oid] = $wrapper;
-
-        // bind wrapper instead of the $callable
-        $this->on($eventName, $wrapper, $priority);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function one(
-        /*# string */ $eventName,
-        callable $callable,
-        /*# int */ $priority = 50
-    ) {
-        return $this->many(1, $eventName, $callable, $priority);
-    }
-
-    /**
-     * Override `off()` in EventManager
-     *
-     * Added support for countable callable
-     *
-     * {@inheritDoc}
-     */
-    public function off(
-        /*# string */ $eventName = '',
-        callable $callable = null
-    ) {
-        if (null !== $callable) {
-            $oid = $this->hashCallable($callable);
-            if (isset($this->callable_map[$eventName][$oid])) {
-                $callable = $this->callable_map[$eventName][$oid];
-                unset($this->callable_map[$eventName][$oid]);
-            }
-        } else {
-            unset($this->callable_map[$eventName]);
-        }
-        return parent::off($eventName, $callable);
     }
 
     /**
@@ -215,17 +148,5 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
             }
         }
         return $nqueue;
-    }
-
-    /**
-     * Returns a unique id for $callable with $eventName
-     *
-     * @param  callable $callable
-     * @return string
-     * @access protected
-     */
-    protected function hashCallable(callable $callable)/*# string */
-    {
-        return spl_object_hash((object) $callable);
     }
 }

@@ -35,7 +35,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      *
      * ```php
      * eventDispatcher::onEvent(
-     *     'Phossa\\Mvc\\MvcInterface',
+     *     'Phossa2\\Mvc\\MvcInterface',
      *     'mvc.onRoute',
      *     function ($evt) {
      *         // ...

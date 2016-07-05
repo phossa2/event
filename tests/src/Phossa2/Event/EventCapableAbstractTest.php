@@ -83,4 +83,14 @@ class EventCapableAbstractTest extends \PHPUnit_Framework_TestCase
         // will trigger its own handler and interface level handler
         $obj->triggerEvent('afterTest');
     }
+
+    /**
+     * @covers Phossa2\Event\EventCapableAbstract::trigger
+     */
+    public function testTrigger()
+    {
+        $this->expectOutputString('xxxyyy');
+        $obj = new \MyClass();
+        $this->assertTrue($obj->trigger('afterTest'));
+    }
 }

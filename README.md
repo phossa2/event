@@ -97,8 +97,8 @@ Usage
 
   - one-char-string `*` means match any string (including the dot).
 
-  **Note** Name globbing only happens when event is being triggered. Binding
-  or unbinding events only affect the *EXACT* event name.
+  **Note:** Name globbing **ONLY** happens when event is being triggered.
+  Binding or unbinding events only affect the *EXACT* event name.
 
   ```php
   // unbind the exact 'login.*'
@@ -110,17 +110,17 @@ Usage
   Class `EventDispatcher` implements the `Phossa2\Shared\Shareable\ShareableInterface`.
 
   `ShareableInterface` is an extended version of `Singleton`. Instead of
-  supporting only *ONE* shared instance, `ShareableInterface` may have shared
-  instance for different `scope`.
+  supporting only one shared instance, Classes implements `ShareableInterface`
+  may have shared instance for different `scope`.
 
   ```php
-  // global manager, global scope is ''
+  // global event manager, global scope is ''
   $globalEvents = EventDispatcher::getShareable();
 
   // shared event manager in scope 'MVC'
   $mvcEvents = EventDispatcher::getShareable('MVC');
 
-  // create a event manager INSTANCE, which has scope 'MVC'
+  // a event manager instance, which has scope 'MVC'
   $events = new EventDispatcher('MVC');
 
   // in scope MVC ?
@@ -134,12 +134,15 @@ Usage
   manager instance has the same scope.
 
   ```php
+  // shared event manager in scope 'MVC'
+  $mvcEvents = EventDispatcher::getShareable('MVC');
+
   // bind with pirority 100 (last executed)
   $mvcEvents->on('*', function($evt) {
       echo "mvc";
   }, 100);
 
-  // create a new instance with the MVC scope
+  // create a new instance within the MVC scope
   $events = new EventDispatcher('MVC');
 
   // bind with default priority 50
@@ -226,6 +229,7 @@ Usage
 
   $listener = new \myListener();
 
+  // bind all events defined in $listener->eventsListening()
   $events->attachListener($listener);
 
   // will call $listener->method1()
@@ -263,7 +267,7 @@ Usage
   is called,
 
   - Get the event manager. If it is not set yet, create one default event
-    manager with its classname as scope.
+    manager with current classname as scope.
 
   - Attach events defined in `eventsListening()` if not yet.
 
@@ -275,10 +279,8 @@ Usage
   {
       public function login() {
 
-          $evt = $this->triggerEvent('login.pre');
-
           // failed
-          if ($evt->isPropergationStopped()) {
+          if (!$this->trigger('login.pre')) {
               return;
           }
 
@@ -332,20 +334,20 @@ Usage
 
   $obj = new MyClass();
 
-  // will trigger callable 'myMethod' and callables in MyInterface
-  $obj->triggerEvent('afterTest');
+  // will trigger callable 'myMethod' and handlers for 'MyInterface'
+  $obj->trigger('afterTest');
   ```
 
 - <a name="limit"></a>Execute callable for limited times
 
   ```php
   // bind a callable for executing only once
-  $dispatcher->one('user.login', function(Event $evt) {
+  $events->one('user.login', function(Event $evt) {
       // ...
   });
 
-  // allow 3 times
-  $dispatcher->many(3, 'user.tag', function(Event $evt) {
+  // 3 times
+  $events->many(3, 'user.tag', function(Event $evt) {
       // ...
   });
   ```

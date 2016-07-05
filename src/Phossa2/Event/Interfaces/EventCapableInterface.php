@@ -68,6 +68,21 @@ interface EventCapableInterface
     public function setEventPrototype(EventInterface $eventPrototype);
 
     /**
+     * Trigger an event and return the event status (isPropagationStopped)
+     *
+     * @param  string $eventName event name
+     * @param  array $properties (optional) custom event properties if any
+     * @return bool
+     * @throws \Exception if event processing goes wrong
+     * @access public
+     * @api
+     */
+    public function trigger(
+        /*# string */ $eventName,
+        array $properties = []
+    )/*# : bool */;
+
+    /**
      * Trigger an event and processed it by event manager, return the event
      *
      * @param  string $eventName event name

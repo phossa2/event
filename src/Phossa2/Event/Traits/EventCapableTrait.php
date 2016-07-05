@@ -89,6 +89,20 @@ trait EventCapableTrait
     /**
      * {@inheritDoc}
      */
+    public function trigger(
+        /*# string */ $eventName,
+        array $properties = []
+    )/*# : bool */ {
+        // trigger the event
+        $evt = $this->triggerEvent($eventName, $properties);
+
+        // success or stopped
+        return !$evt->isPropagationStopped();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function triggerEvent(
         /*# string */ $eventName,
         array $properties = []

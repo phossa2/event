@@ -33,7 +33,7 @@ use Phossa2\Event\Interfaces\EventManagerInterface;
  * $MvcManager = EventDispatcher::getShareable('MVC');
  *
  * // class/interface level shared manager
- * $classManager = EventDispatcher::getShareable('Phossa\\Config\\Config');
+ * $classManager = EventDispatcher::getShareable('Phossa2\\Config\\Config');
  * ```
  *
  * @package Phossa2\Event
