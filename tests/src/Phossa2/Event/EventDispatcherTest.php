@@ -20,6 +20,8 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->object = new EventDispatcher();
+
+        require_once __DIR__ . '/MyClass.php';
     }
 
     /**
@@ -64,6 +66,8 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * name globbing
+     *
      * @covers Phossa2\Event\EventDispatcher::matchEventName
      */
     public function testMatchEventName()
@@ -115,6 +119,8 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * name globbing
+     *
      * @covers Phossa2\Event\EventDispatcher::globEventNames
      */
     public function testGlobEventNames()
@@ -130,14 +136,14 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * test shared event manager
+     * shared event manager
      *
      * @covers Phossa2\Event\EventDispatcher::addScope
      * @covers Phossa2\Event\EventDispatcher::getShareable
      * @covers Phossa2\Event\EventDispatcher::on
      * @covers Phossa2\Event\EventDispatcher::trigger
      */
-    public function testSharedManager()
+    public function testSharedManager1()
     {
         $this->expectOutputString('scope_bingoBINGO');
 
@@ -155,5 +161,81 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         });
 
         $this->object->trigger('bingo');
+    }
+
+    /**
+     * shared event manager
+     *
+     * @covers Phossa2\Event\EventDispatcher::onEvent
+     * @covers Phossa2\Event\EventDispatcher::offEvent
+     */
+    public function testSharedManager2()
+    {
+        $this->expectOutputString('wow');
+
+        $this->object->addScope('x');
+        EventDispatcher::onEvent('x', '*', function($evt) {
+            echo $evt->getName();
+        });
+
+        $this->object->trigger('wow');
+
+        EventDispatcher::offEvent('x');
+        $this->object->trigger('wow');
+    }
+
+    /**
+     * listener aware
+     *
+     * @covers Phossa2\Event\EventDispatcher::attachListener
+     * @covers Phossa2\Event\EventDispatcher::detachListener
+     */
+    public function testAttachListener()
+    {
+        $this->expectOutputString('xxx');
+
+        $listener = new \MyClass();
+
+        // attach
+        $this->object->attachListener($listener);
+        $this->object->trigger('afterTest');
+
+        // detach
+        $this->object->detachListener($listener, 'afterTest');
+        $this->object->trigger('afterTest');
+    }
+
+    /**
+     * countable
+     *
+     * @covers Phossa2\Event\EventDispatcher::one
+     * @covers Phossa2\Event\EventDispatcher::many
+     * @covers Phossa2\Event\EventDispatcher::off
+     */
+    public function testOne()
+    {
+        $this->expectOutputString('onetwotwothree');
+
+        // one
+        $this->object->one('one', function() {
+            echo "one";
+        });
+        $this->object->trigger('one');
+        $this->object->trigger('one');
+
+        // many
+        $this->object->many(2, 'two', function() {
+            echo "two";
+        });
+        $this->object->trigger('two');
+        $this->object->trigger('two');
+
+        // off
+        $this->object->many(3, 'three', function() {
+            echo "three";
+        });
+        $this->object->trigger('three');
+        $this->object->off('three');
+        $this->object->trigger('three');
     }
 }

@@ -352,13 +352,6 @@ Usage
   });
   ```
 
-APIs
----
-
-- `Events` related.
-
-
-
 Dependencies
 ---
 
