@@ -15,7 +15,6 @@
 namespace Phossa2\Event\Traits;
 
 use Phossa2\Shared\Shareable\ShareableTrait;
-use Phossa2\Event\Interfaces\EventManagerInterface;
 
 /**
  * SharedManagerTrait
