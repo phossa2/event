@@ -120,7 +120,7 @@ Usage
   // shared event manager in scope 'MVC'
   $mvcEvents = EventDispatcher::getShareable('MVC');
 
-  // a event manager instance, which has scope 'MVC'
+  // an event manager instance, which has scope 'MVC'
   $events = new EventDispatcher('MVC');
 
   // in scope MVC ?
@@ -174,8 +174,8 @@ Usage
 
   // use interface name as a scope
   EventDispatcher::onEvent(
-      'Psr\\Log\\LoggerInterface',
-      'log.error',
+      'Psr\\Log\\LoggerInterface', // scope
+      'log.error', // event name
       function () {}
   );
 
@@ -185,7 +185,7 @@ Usage
       'log.error'
   );
 
-  // unbind ALL events in global scope
+  // unbind *ALL* events in global scope
   EventDispatcher::offGlobalEvent();
   ```
 
@@ -206,9 +206,9 @@ Usage
               eventName1 => 'method1',
 
               // 2 methods
-              eventName2 => ['callable1, 'method2'],
+              eventName2 => ['callable1', 'method2'],
 
-              // priority 20 and in a scope
+              // priority 20 and in a 'mvcScope' scope
               eventName2 => ['method2', 20, 'mvcScope'], // with priority 20
 
               eventName3 => [
