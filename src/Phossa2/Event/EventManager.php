@@ -89,18 +89,13 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
 
         // get handler queue
         $queue = $this->getMatchedQueue($evt->getName());
-
-        // walk thru the queue
         foreach ($queue as $q) {
             // execute the handler
             $res = $q['data']($evt);
 
-            // add result to event
             if ($evt instanceof EventResultInterface) {
                 $evt->addResult($res);
             }
-
-            // break out if event stopped
             if ($evt->isPropagationStopped()) {
                 break;
             }
