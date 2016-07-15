@@ -3,8 +3,8 @@
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/phossa2/event",
-    "description": "Event management libraray for PHP",
-    "keywords": [ "phossa2", "phossa", "event" ],
+    "description": "PSR-14 event manager implementation libraray for PHP",
+    "keywords": [ "event", "event manager", "psr", "psr-14", "phossa" ],
     "authors": [
         {
             "name": "Hong Zhang",
@@ -25,7 +25,7 @@
         "phossa/phossa-event": "*"
     },
     "provide": {
-        "phossa2/event-implementation": "^2.0"
+        "psr/event-manager-implementation": "^1.0"
     },
     "config": {
         "platform": {

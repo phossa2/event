@@ -184,7 +184,8 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
      */
     protected function fixPriority(/*# int */ $priority)/*# : int */
     {
-        return (int)($priority > 100 ? 100 : ($priority < -100 ? -100 : $priority));
+        return (int) ($priority > 100 ? 100 :
+            ($priority < -100 ? -100 : $priority));
     }
 
     /**

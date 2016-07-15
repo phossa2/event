@@ -1,26 +1,27 @@
 # phossa2/event
 [![Build Status](https://travis-ci.org/phossa2/event.svg?branch=master)](https://travis-ci.org/phossa2/event)
-[![Code Quality](https://scrutinizer-ci.com/g/phossa2/event/badges/quality-score.png?b=master)](https://travis-ci.org/phossa2/event)
+[![Code Quality](https://scrutinizer-ci.com/g/phossa2/event/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phossa2/event/)
 [![PHP 7 ready](http://php7ready.timesplinter.ch/phossa2/event/master/badge.svg)](https://travis-ci.org/phossa2/event)
 [![HHVM](https://img.shields.io/hhvm/phossa2/event.svg?style=flat)](http://hhvm.h4cc.de/package/phossa2/event)
 [![Latest Stable Version](https://img.shields.io/packagist/vpre/phossa2/event.svg?style=flat)](https://packagist.org/packages/phossa2/event)
 [![License](https://poser.pugx.org/phossa2/event/license)](http://mit-license.org/)
 
-**phossa2/event** is an event management library for PHP.
+**phossa2/event** is an PSR-14 event manager library for PHP.
 
 It requires PHP 5.4, supports PHP 7.0+ and HHVM. It is compliant with
-[PSR-1][PSR-1], [PSR-2][PSR-2], [PSR-4][PSR-4].
+[PSR-1][PSR-1], [PSR-2][PSR-2], [PSR-4][PSR-4] and the upcoming [PSR-14][PSR-14]
 
 [PSR-1]: http://www.php-fig.org/psr/psr-1/ "PSR-1: Basic Coding Standard"
 [PSR-2]: http://www.php-fig.org/psr/psr-2/ "PSR-2: Coding Style Guide"
 [PSR-4]: http://www.php-fig.org/psr/psr-4/ "PSR-4: Autoloader"
+[PSR-14]: https://github.com/php-fig/fig-standards/blob/master/proposed/event-manager.md "Event Manager"
 
 Installation
 ---
 Install via the `composer` utility.
 
 ```
-composer require "phossa2/event=2.*"
+composer require "phossa2/event=2.1.*"
 ```
 
 or add the following lines to your `composer.json`
@@ -28,7 +29,7 @@ or add the following lines to your `composer.json`
 ```json
 {
     "require": {
-       "phossa2/event": "^2.0.0"
+       "phossa2/event": "^2.1.0"
     }
 }
 ```
@@ -60,15 +61,15 @@ Usage
   $events = new EventDispatcher();
 
   // bind event with a callback
-  $events->on('login.success', function($evt) {
-      echo "logged in as ". $evt->getProperty('username');
+  $events->attach('login.success', function($evt) {
+      echo "logged in as ". $evt->getParam('username');
   });
 
   // bind event with a callable
-  $events->on('login.attempt', [$logger, 'logEvent']);
+  $events->attach('login.attempt', [$logger, 'logEvent']);
 
   // unbind an event
-  $events->off('login.attempt');
+  $events->clearListeners('login.attempt');
 
   // fire the trigger
   $events->trigger('login.success');
@@ -81,7 +82,7 @@ Usage
 
   ```php
   // bind 'login.*' with callables
-  $events->on('login.*', function($evt) {
+  $events->attach('login.*', function($evt) {
       echo $evt->getName();
   });
 
@@ -102,14 +103,14 @@ Usage
 
   ```php
   // unbind the exact 'login.*'
-  $events->off('login.*');
+  $events->clearListeners('login.*');
   ```
 
 - <a name="shared"></a>Shared event manager support
 
   Class `EventDispatcher` implements the `Phossa2\Shared\Shareable\ShareableInterface`.
 
-  `ShareableInterface` is an extended version of `Singleton`. Instead of
+  `ShareableInterface` is an extended version of singleton pattern. Instead of
   supporting only one shared instance, Classes implements `ShareableInterface`
   may have shared instance for different `scope`.
 
@@ -130,23 +131,23 @@ Usage
   var_dump($events->hasScope()); // true
   ```
 
-  Callables bound to a shared manager will also be triggered if an event
-  manager instance has the same scope.
+  Callables bound to a shared manager will also be triggered if an event manager
+  instance has the same scope.
 
   ```php
   // shared event manager in scope 'MVC'
   $mvcEvents = EventDispatcher::getShareable('MVC');
 
-  // bind with pirority 100 (last executed)
-  $mvcEvents->on('*', function($evt) {
+  // bind with pirority 100 (highest priority)
+  $mvcEvents->attach('*', function($evt) {
       echo "mvc";
   }, 100);
 
   // create a new instance within the MVC scope
   $events = new EventDispatcher('MVC');
 
-  // bind with default priority 50
-  $events->on('test', function($evt) {
+  // bind with default priority 0
+  $events->attach('test', function($evt) {
       echo "test";
   });
 
@@ -154,8 +155,8 @@ Usage
   $events->trigger("test");
   ```
 
-  Event manager instance can have multiple scopes, either specified during
-  the instantiation or using `addScope()`.
+  Event manager instance can have multiple scopes, either specified during the
+  instantiation or using `addScope()`.
 
   ```php
   // create an event manager with 2 scopes
@@ -191,8 +192,8 @@ Usage
 
 - <a name="attach"></a>Attaching a listener
 
-  `Listener` implements the `ListenerInterface`. Or in short, provides a
-  method `eventsListening()`.
+  `Listener` implements the `ListenerInterface`. Or in short, provides a method
+  `eventsListening()`.
 
   ```php
   use Phossa2\Event\Interfaces\ListenerInterface;
@@ -221,7 +222,7 @@ Usage
   ```
 
   `EventDispatcher::attachListener()` can be used to bind events defined in
-  `eventsListening()` instead of using `EventDispatcher::on()` to bind each
+  `eventsListening()` instead of using `EventDispatcher::attach()` to bind each
   event manually.
 
   ```php
@@ -241,7 +242,7 @@ Usage
   `StaticEventDispatcher` is a static wrapper for an `EventDispatcher` slave.
 
   ```php
-  StaticEventDispatcher::on('*', function($evt) {
+  StaticEventDispatcher::attach('*', function($evt) {
       echo 'event ' . $evt->getName();
   });
 

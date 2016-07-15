@@ -40,7 +40,7 @@ interface EventManagerInterface
      * Detaches a listener from an event
      *
      * @param string $event the event to detach too
-     * @param callable $callback a callable function
+     * @param callable|null $callback a callable function
      * @return bool true on success false on failure
      */
     public function detach($event, $callback);
