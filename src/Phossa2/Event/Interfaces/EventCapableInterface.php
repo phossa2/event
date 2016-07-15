@@ -55,7 +55,7 @@ interface EventCapableInterface extends EventPrototypeInterface
     public function getEventManager()/*# : EventManagerInterface */;
 
     /**
-     * Trigger an event and return the event status (isPropagationStopped)
+     * Trigger an event and return last result from handler
      *
      * @param  string $eventName event name
      * @param  array $parameters (optional) custom event parameters if any
