@@ -151,12 +151,12 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $this->object->addScope('scope');
 
         // bind event to shared manager of the $scope1
-        EventDispatcher::getShareable('scope')->on('*', function($evt) {
+        EventDispatcher::getShareable('scope')->attach('*', function($evt) {
             echo "scope_" . $evt->getName();
         }, 10);
 
         // bind to self
-        $this->object->on('bingo', function($evt) {
+        $this->object->attach('bingo', function($evt) {
             echo "BINGO";
         });
 
@@ -235,7 +235,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
             echo "three";
         });
         $this->object->trigger('three');
-        $this->object->off('three');
+        $this->object->clearListeners('three');
         $this->object->trigger('three');
     }
 }

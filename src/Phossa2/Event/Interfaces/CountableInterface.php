@@ -17,10 +17,13 @@ namespace Phossa2\Event\Interfaces;
 /**
  * CountableInterface
  *
+ * Able to execute event handler for limited times
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @sicne   2.1.0 changed default priority to 0
  */
 interface CountableInterface
 {
@@ -31,7 +34,7 @@ interface CountableInterface
      * @param  string $eventName event name
      * @param  callable $callable the callable
      * @param  int $priority
-     * @return $this
+     * @return bool true on success false on failure
      * @access public
      * @api
      */
@@ -39,8 +42,8 @@ interface CountableInterface
         /*# int */ $times,
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    );
+        /*# int */ $priority = 0
+    )/*# : bool */;
 
     /**
      * Bind a callable to event name and execute at most one time
@@ -50,13 +53,13 @@ interface CountableInterface
      * @param  string $eventName event name
      * @param  callable $callable the callable
      * @param  int $priority
-     * @return $this
+     * @return bool true on success false on failure
      * @access public
      * @api
      */
     public function one(
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    );
+        /*# int */ $priority = 0
+    )/*# : bool */;
 }

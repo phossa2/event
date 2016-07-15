@@ -52,8 +52,9 @@ use Phossa2\Event\Interfaces\EventQueueInterface;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ObjectAbstract
  * @see     EventQueueInterface
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 used updated interface
  */
 class EventQueue extends ObjectAbstract implements EventQueueInterface
 {
@@ -74,6 +75,14 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
     protected $sorted = false;
 
     /**
+     * priority counter, descreasing
+     *
+     * @var    int
+     * @access protected
+     */
+    protected $counter = 10000000;
+
+    /**
      * constructor
      *
      * @access public
@@ -86,12 +95,12 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
     /**
      * {@inheritDoc}
      */
-    public function insert(callable $callable, /*# int */ $priority = 50)
+    public function insert(callable $callable, /*# int */ $priority = 0)
     {
-        // fix priority, range is 0 - 100
+        // fix priority
         $pri = $this->fixPriority((int) $priority);
 
-        // generate key (int)
+        // generate key to be used (int)
         $key = $this->generateKey($pri);
 
         // make sure not duplicated
@@ -167,7 +176,7 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
     }
 
     /**
-     * Make sure priority in the range of 0 - 100
+     * Make sure priority in the range of -100 - +100
      *
      * @param  int $priority
      * @return int
@@ -175,7 +184,7 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
      */
     protected function fixPriority(/*# int */ $priority)/*# : int */
     {
-        return $priority > 100 ? 100 : ($priority < 0 ? 0 : $priority);
+        return (int)($priority > 100 ? 100 : ($priority < -100 ? -100 : $priority));
     }
 
     /**
@@ -187,12 +196,11 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
      */
     protected function generateKey(/*# int */ $priority)/*# : int */
     {
-        static $CNT = 0;
-        return $priority * 10000000 + $CNT++;
+        return ($priority + 100) * 10000000 + --$this->counter;
     }
 
     /**
-     * Sort the queue from lower to higher int $key
+     * Sort the queue from higher to lower int $key
      *
      * @return $this
      * @access protected
@@ -200,7 +208,7 @@ class EventQueue extends ObjectAbstract implements EventQueueInterface
     protected function sortQueue()
     {
         if (!$this->sorted) {
-            ksort($this->queue);
+            krsort($this->queue);
             $this->sorted = true;
         }
         return $this;

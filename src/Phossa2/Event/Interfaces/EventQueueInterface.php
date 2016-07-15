@@ -21,8 +21,9 @@ namespace Phossa2\Event\Interfaces;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 changed priority
  */
 interface EventQueueInterface extends \IteratorAggregate, \Countable
 {
@@ -30,12 +31,12 @@ interface EventQueueInterface extends \IteratorAggregate, \Countable
      * Insert event handler into the queue with priority
      *
      * @param  callable $callable
-     * @param  int $priority priority, 0 - 100, 0 executed first
+     * @param  int $priority priority, higher number executed first
      * @return $this
      * @access public
      * @api
      */
-    public function insert(callable $callable, /*# int */ $priority = 50);
+    public function insert(callable $callable, /*# int */ $priority = 0);
 
     /**
      * Remove an event handler from the queue

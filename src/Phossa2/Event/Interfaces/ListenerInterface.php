@@ -21,7 +21,7 @@ namespace Phossa2\Event\Interfaces;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
  */
 interface ListenerInterface

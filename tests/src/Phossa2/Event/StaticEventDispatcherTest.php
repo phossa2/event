@@ -46,25 +46,25 @@ class StaticEventDispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Phossa2\Event\StaticEventDispatcher::on
-     * @covers Phossa2\Event\StaticEventDispatcher::off
+     * @covers Phossa2\Event\StaticEventDispatcher::attach
+     * @covers Phossa2\Event\StaticEventDispatcher::clearListeners
      * @covers Phossa2\Event\StaticEventDispatcher::trigger
      */
-    public function testOn()
+    public function testAttach()
     {
-        $this->expectOutputString('t**t*');
+        $this->expectOutputString('*t*t*');
 
-        StaticEventDispatcher::on('*', function() {
+        StaticEventDispatcher::attach('*', function() {
             echo '*';
         }, 100);
 
-        StaticEventDispatcher::on('t*', function() {
+        StaticEventDispatcher::attach('t*', function() {
             echo 't*';
         }, 20);
 
         StaticEventDispatcher::trigger('test');
 
-        StaticEventDispatcher::off('*');
+        StaticEventDispatcher::clearListeners('*');
         StaticEventDispatcher::trigger('test');
     }
 }

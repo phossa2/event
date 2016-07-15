@@ -17,22 +17,23 @@ namespace Phossa2\Event;
 use Phossa2\Event\Message\Message;
 use Phossa2\Shared\Base\ObjectAbstract;
 use Phossa2\Event\Interfaces\EventInterface;
+use Phossa2\Event\Interfaces\EventResultInterface;
 use Phossa2\Event\Exception\InvalidArgumentException;
 
 /**
  * Event
  *
- * Basic implementation of EventInterface with array access to properties
+ * Basic implementation of EventInterface with array access to parameters
  *
  * ```php
  * // create event
  * $evt = new Event(
  *     'login.attempt',         // event name
- *     $this,                   // event context
- *     ['username' => 'phossa'] // event properties
+ *     $this,                   // event target
+ *     ['username' => 'phossa'] // event parameters
  * );
  *
- * // get/set event property
+ * // get/set event parameter
  * if ('phossa' === $evt['username']) {
  *     $evt['username'] = 'phossa2';
  * }
@@ -45,10 +46,13 @@ use Phossa2\Event\Exception\InvalidArgumentException;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ObjectAbstract
  * @see     EventInterface
+ * @see     EventResultInterface
+ * @see     \ArrayAccess
  * @version 2.0.0
  * @since   2.0.0 added
+ * @since   2.1.0 using psr EventInterface now
  */
-class Event extends ObjectAbstract implements EventInterface
+class Event extends ObjectAbstract implements EventInterface, EventResultInterface, \ArrayAccess
 {
     /**
      * event name
@@ -59,22 +63,22 @@ class Event extends ObjectAbstract implements EventInterface
     protected $name;
 
     /**
-     * event context
+     * event target/context
      *
      * an object OR static class name (string)
      *
      * @var    object|string|null
      * @access protected
      */
-    protected $context;
+    protected $target;
 
     /**
-     * event properties
+     * event parameters
      *
      * @var    array
      * @access protected
      */
-    protected $properties;
+    protected $parameters;
 
     /**
      * Results from the handlers
@@ -96,53 +100,26 @@ class Event extends ObjectAbstract implements EventInterface
      * Constructor
      *
      * @param  string $eventName event name
-     * @param  string|object|null $context event context, object or classname
-     * @param  array $properties (optional) event properties
-     * @throws InvalidArgumentException if arguments not right
+     * @param  string|object|null $target event context, object or classname
+     * @param  array $parameters (optional) event parameters
+     * @throws InvalidArgumentException if event name is invalid
      * @access public
      * @api
      */
     public function __construct(
         /*# string */ $eventName,
-        $context = null,
-        array $properties = []
+        $target = null,
+        array $parameters = []
     ) {
-        $this->__invoke($eventName, $context, $properties);
+        $this->setName($eventName);
+        $this->setTarget($target);
+        $this->setParams($parameters);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function __invoke(
-        /*# string */ $eventName,
-        $context = null,
-        array $properties = []
-    ) {
-        return $this->setName($eventName)
-            ->setContext($context)
-            ->setProperties($properties);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setName(/*# string */ $eventName)
-    {
-        if (!is_string($eventName) || empty($eventName)) {
-            throw new InvalidArgumentException(
-                Message::get(Message::EVT_NAME_INVALID, $eventName),
-                Message::EVT_NAME_INVALID
-            );
-        }
-        $this->name = $eventName;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()/*# : string */
+    public function getName()
     {
         return $this->name;
     }
@@ -150,43 +127,26 @@ class Event extends ObjectAbstract implements EventInterface
     /**
      * {@inheritDoc}
      */
-    public function setContext($context)
+    public function getTarget()
     {
-        if (is_null($context) ||
-            $this->isValidContext($context)
-        ) {
-            $this->context = $context;
-            return $this;
-        }
-        throw new InvalidArgumentException(
-            Message::get(Message::EVT_CONTEXT_INVALID, $context),
-            Message::EVT_CONTEXT_INVALID
-        );
+        return $this->target;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getContext()
+    public function getParams()
     {
-        return $this->context;
+        return $this->parameters;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function hasProperty(/*# string */ $name)/*#: bool */
+    public function getParam($name)
     {
-        return isset($this->properties[(string) $name]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getProperty(/*# string */ $name)
-    {
-        if ($this->hasProperty($name)) {
-            return $this->properties[(string) $name];
+        if (isset($this->parameters[(string) $name])) {
+            return $this->parameters[(string) $name];
         }
         return null;
     }
@@ -194,31 +154,47 @@ class Event extends ObjectAbstract implements EventInterface
     /**
      * {@inheritDoc}
      */
-    public function setProperty(/*# string */ $name, $value)
+    public function setName($name)
     {
-        if (null === $value) {
-            unset($this->properties[(string) $name]);
-        } else {
-            $this->properties[(string) $name] = $value;
+        if (!is_string($name) || empty($name)) {
+            throw new InvalidArgumentException(
+                Message::get(Message::EVT_NAME_INVALID, $name),
+                Message::EVT_NAME_INVALID
+            );
         }
-        return $this;
+        $this->name = $name;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getProperties()/*# : array */
+    public function setTarget($target)
     {
-        return $this->properties;
+        $this->target = $target;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setProperties(array $properties)
+    public function setParams(array $params)
     {
-        $this->properties = $properties;
-        return $this;
+        $this->parameters = $params;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function stopPropagation($flag)
+    {
+        $this->stopped = (bool) $flag;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isPropagationStopped()
+    {
+        return $this->stopped;
     }
 
     /**
@@ -227,7 +203,6 @@ class Event extends ObjectAbstract implements EventInterface
     public function addResult($result)
     {
         $this->results[] = $result;
-        return $this;
     }
 
     /**
@@ -241,26 +216,9 @@ class Event extends ObjectAbstract implements EventInterface
     /**
      * {@inheritDoc}
      */
-    public function stopPropagation(/*# bool */ $stop = true)
-    {
-        $this->stopped = (bool) $stop;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isPropagationStopped()/*# : bool */
-    {
-        return $this->stopped;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function offsetExists($offset)/*# : bool */
     {
-        return $this->hasProperty($offset);
+        return isset($this->parameters[$offset]);
     }
 
     /**
@@ -268,7 +226,7 @@ class Event extends ObjectAbstract implements EventInterface
      */
     public function offsetGet($offset)
     {
-        return $this->getProperty($offset);
+        return $this->getParam($offset);
     }
 
     /**
@@ -276,7 +234,7 @@ class Event extends ObjectAbstract implements EventInterface
      */
     public function offsetSet($offset, $value)
     {
-        $this->setProperty($offset, $value);
+        $this->parameters[$offset] = $value;
     }
 
     /**
@@ -284,24 +242,6 @@ class Event extends ObjectAbstract implements EventInterface
      */
     public function offsetUnset($offset)
     {
-        $this->setProperty($offset, null);
-    }
-
-    /**
-     * Is valid context
-     *
-     * @param  mixed $context
-     * @return bool
-     * @access protected
-     */
-    protected function isValidContext($context)/*# : bool */
-    {
-        if (is_object($context) ||
-            is_string($context) && class_exists($context, false)
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        unset($this->parameters[$offset]);
     }
 }

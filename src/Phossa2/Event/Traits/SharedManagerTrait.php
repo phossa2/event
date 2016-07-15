@@ -15,6 +15,7 @@
 namespace Phossa2\Event\Traits;
 
 use Phossa2\Shared\Shareable\ShareableTrait;
+use Phossa2\Event\Interfaces\EventManagerInterface;
 
 /**
  * SharedManagerTrait
@@ -38,8 +39,10 @@ use Phossa2\Shared\Shareable\ShareableTrait;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     SharedManagerInterface
- * @version 2.0.0
+ * @see     EventManagerInterface
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 trait SharedManagerTrait
 {
@@ -52,13 +55,14 @@ trait SharedManagerTrait
         $scope,
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    ) {
+        /*# int */ $priority = 0
+    )/*# : bool */ {
         foreach ((array) $scope as $sc) {
             /* @var $em EventManagerInterface */
             $em = static::getShareable($sc);
-            $em->on($eventName, $callable, $priority);
+            $em->attach($eventName, $callable, $priority);
         }
+        return true;
     }
 
     /**
@@ -68,12 +72,13 @@ trait SharedManagerTrait
         $scope,
         /*# string */ $eventName = '',
         callable $callable = null
-    ) {
+    )/*# : bool */ {
         foreach ((array) $scope as $sc) {
             /* @var $em EventManagerInterface */
             $em = static::getShareable($sc);
-            $em->off($eventName, $callable);
+            $em->detach($eventName, $callable);
         }
+        return true;
     }
 
     /**
@@ -82,10 +87,10 @@ trait SharedManagerTrait
     public static function onGlobalEvent(
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    ) {
+        /*# int */ $priority = 0
+    )/*# : bool */ {
         // scope '' means GLOBAL
-        static::onEvent('', $eventName, $callable, $priority);
+        return static::onEvent('', $eventName, $callable, $priority);
     }
 
     /**
@@ -94,9 +99,9 @@ trait SharedManagerTrait
     public static function offGlobalEvent(
         /*# string */ $eventName = '',
         callable $callable = null
-    ) {
+    )/*# : bool */ {
         // scope '' means GLOBAL
-        static::offEvent('', $eventName, $callable);
+        return static::offEvent('', $eventName, $callable);
     }
 
     /**
@@ -128,18 +133,6 @@ trait SharedManagerTrait
     }
 
     /**
-     * Is $type a classname or interface name ?
-     *
-     * @param  string $type
-     * @return bool
-     * @access protected
-     */
-    protected function isAType(/*# string */ $type)/*# : bool */
-    {
-        return class_exists($type) || interface_exists($type);
-    }
-
-    /**
      * Get all types (class or interface) from the given scopes
      *
      * @param  array $scopes
@@ -155,6 +148,18 @@ trait SharedManagerTrait
             }
         }
         return $result;
+    }
+
+    /**
+     * Is $type a classname or interface name ?
+     *
+     * @param  string $type
+     * @return bool
+     * @access protected
+     */
+    protected function isAType(/*# string */ $type)/*# : bool */
+    {
+        return class_exists($type) || interface_exists($type);
     }
 
     /**

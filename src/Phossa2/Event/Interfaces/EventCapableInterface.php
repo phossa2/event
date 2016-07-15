@@ -21,8 +21,9 @@ namespace Phossa2\Event\Interfaces;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 interface EventCapableInterface
 {
@@ -71,22 +72,22 @@ interface EventCapableInterface
      * Trigger an event and return the event status (isPropagationStopped)
      *
      * @param  string $eventName event name
-     * @param  array $properties (optional) custom event properties if any
-     * @return bool
+     * @param  array $parameters (optional) custom event parameters if any
+     * @return mixed last handler result
      * @throws \Exception if event processing goes wrong
      * @access public
      * @api
      */
     public function trigger(
         /*# string */ $eventName,
-        array $properties = []
-    )/*# : bool */;
+        array $parameters = []
+    );
 
     /**
      * Trigger an event and processed it by event manager, return the event
      *
      * @param  string $eventName event name
-     * @param  array $properties (optional) custom event properties if any
+     * @param  array $parameters (optional) custom event parameters if any
      * @return EventInterface
      * @throws \Exception if event processing goes wrong
      * @access public
@@ -94,6 +95,6 @@ interface EventCapableInterface
      */
     public function triggerEvent(
         /*# string */ $eventName,
-        array $properties = []
+        array $parameters = []
     )/*# : EventInterface */;
 }

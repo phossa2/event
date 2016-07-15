@@ -93,13 +93,10 @@ trait EventCapableTrait
      */
     public function trigger(
         /*# string */ $eventName,
-        array $properties = []
+        array $parameters = []
     )/*# : bool */ {
-        // trigger the event
-        $evt = $this->triggerEvent($eventName, $properties);
-
-        // success or stopped
-        return !$evt->isPropagationStopped();
+        $evt = $this->createEvent($eventName, $parameters);
+        return $this->getEventManager()->trigger($evt);
     }
 
     /**
@@ -107,39 +104,35 @@ trait EventCapableTrait
      */
     public function triggerEvent(
         /*# string */ $eventName,
-        array $properties = []
+        array $parameters = []
     )/*# : EventInterface */ {
-        // create an event with context $this
-        $evt = $this->createEvent($eventName, $properties);
-
-        // process it
+        $evt = $this->createEvent($eventName, $parameters);
         $this->getEventManager()->trigger($evt);
-
-        // return the event
         return $evt;
     }
 
     /**
-     * Create an event with $eventName and properties
+     * Create an event with $eventName and parameters
      *
      * @param  string $eventName
-     * @param  array $properties
+     * @param  array $parameters
      * @return EventInterface
      * @access protected
      */
     protected function createEvent(
         /*# string */ $eventName,
-        array $properties
+        array $parameters
     )/*# : EventInterface */ {
         // get event prototype
         if (is_null($this->event_proto)) {
-            return new Event($eventName, $this, $properties);
+            return new Event($eventName, $this, $parameters);
         } else {
             // clone the prototype
             $evt = clone $this->event_proto;
-
-            // init the event and return it
-            return $evt($eventName, $this, $properties);
+            $evt->setName($eventName);
+            $evt->setTarget($this);
+            $evt->setParams($parameters);
+            return $evt;
         }
     }
 }

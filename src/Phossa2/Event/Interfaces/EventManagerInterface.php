@@ -17,68 +17,51 @@ namespace Phossa2\Event\Interfaces;
 /**
  * EventManagerInterface
  *
+ * The proposed Psr\EventManager\EventManagerInterface
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
- * @since   2.0.0 added
+ * @version 2.1.0
+ * @since   2.1.0 added
  */
 interface EventManagerInterface
 {
     /**
-     * Bind a callable to event name with priority 0 - 100 (100 executed last)
+     * Attaches a listener to an event
      *
-     * e.g.
-     * ```php
-     * $events = new EventManager();
-     *
-     * // bind event 'user.login' to a callable
-     * $events->on('user.login', function(Event $evt) {
-     *     $user = $evt->getProperty('user');
-     *     //...
-     * });
-     *
-     * // trigger the 'user.login' event with some data
-     * $events->triggerEvent(new Event('user.login', $this, ['user' => $user]));
-     * ```
-     *
-     * @param  string $eventName
-     * @param  callable $callable
-     * @param  int $priority
-     * @return $this
-     * @access public
-     * @api
+     * @param string $event the event to attach too
+     * @param callable $callback a callable function
+     * @param int $priority the priority at which the $callback executed
+     * @return bool true on success false on failure
      */
-    public function on(
-        /*# string */ $eventName,
-        callable $callable,
-        /*# int */ $priority = 50
-    );
+    public function attach($event, $callback, $priority = 0);
 
     /**
-     * Unbind a callable from a specific eventName
+     * Detaches a listener from an event
      *
-     * If $eventName == '', turn off all events
-     *
-     * @param  string $eventName
-     * @param  callable $callable
-     * @return $this
-     * @access public
-     * @api
+     * @param string $event the event to detach too
+     * @param callable $callback a callable function
+     * @return bool true on success false on failure
      */
-    public function off(
-        /*# string */ $eventName = '',
-        callable $callable = null
-    );
+    public function detach($event, $callback);
 
     /**
-     * trigger and process the event
+     * Clear all listeners for a given event
      *
-     * @param  EventInterface|string $event
-     * @param  object|string $context
-     * @param  array $properties
-     * @return $this
-     * @access public
-     * @api
+     * @param  string $event
+     * @return void
      */
-    public function trigger($event, $context = null, array $properties = []);
+    public function clearListeners($event);
+
+    /**
+     * Trigger an event
+     *
+     * Can accept an EventInterface or will create one if not passed
+     *
+     * @param  string|EventInterface $event
+     * @param  object|string $target
+     * @param  array|object $argv
+     * @return mixed
+     */
+    public function trigger($event, $target = null, $argv = array());
 }

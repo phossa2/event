@@ -34,14 +34,14 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Phossa2\Event\EventManager::on
+     * @covers Phossa2\Event\EventManager::attach
      * @covers Phossa2\Event\EventManager::trigger
      */
-    public function testOn1()
+    public function testAttach1()
     {
         $this->expectOutputString('test1test1');
 
-        $this->object->on('test1', function(EventInterface $evt) {
+        $this->object->attach('test1', function(EventInterface $evt) {
             echo $evt->getName();
         });
         $this->object->trigger('test1');
@@ -51,12 +51,12 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * Test callable priority
      *
-     * @covers Phossa2\Event\EventManager::on
+     * @covers Phossa2\Event\EventManager::attach
      * @covers Phossa2\Event\EventManager::trigger
      */
-    public function testOn2()
+    public function testAttach2()
     {
-        $this->expectOutputString('callable2callable1callable1callable2');
+        $this->expectOutputString('callable1callable2callable2callable1');
 
         $callable1 = function(EventInterface $evt) {
             echo "callable1";
@@ -65,22 +65,22 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             echo "callable2";
         };
 
-        $this->object->on('test1', $callable1, 80);
-        $this->object->on('test1', $callable2, 20);
+        $this->object->attach('test1', $callable1, 80);
+        $this->object->attach('test1', $callable2, 20);
 
         $this->object->trigger('test1');
 
         // adjust callable priority
-        $this->object->on('test1', $callable2, 90);
+        $this->object->attach('test1', $callable2, 90);
         $this->object->trigger('test1');
     }
 
     /**
-     * testing off one callable
+     * testing detach one callable
      *
-     * @covers Phossa2\Event\EventManager::off
+     * @covers Phossa2\Event\EventManager::detach
      */
-    public function testOff1()
+    public function testDetach1()
     {
         $this->expectOutputString('callable1callable2callable2');
 
@@ -92,25 +92,25 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         };
 
         // bind
-        $this->object->on('test1', $callable1);
-        $this->object->on('test1', $callable2);
+        $this->object->attach('test1', $callable1);
+        $this->object->attach('test1', $callable2);
 
         // trigger
         $this->object->trigger('test1');
 
         // off one callable
-        $this->object->off('test1', $callable1);
+        $this->object->detach('test1', $callable1);
 
         // trigger remaining callable
         $this->object->trigger('test1');
     }
 
     /**
-     * testing off one eventName
+     * testing detach one eventName
      *
-     * @covers Phossa2\Event\EventManager::off
+     * @covers Phossa2\Event\EventManager::detach
      */
-    public function testOff2()
+    public function testDetach2()
     {
         $this->expectOutputString('callable1callable2');
 
@@ -121,21 +121,21 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             echo "callable2";
         };
 
-        $this->object->on('test1', $callable1);
-        $this->object->on('test1', $callable2);
+        $this->object->attach('test1', $callable1);
+        $this->object->attach('test1', $callable2);
         $this->object->trigger('test1');
 
         // off one event
-        $this->object->off('test1');
+        $this->object->detach('test1', null);
         $this->object->trigger('test1');
     }
 
     /**
-     * testing off all events
+     * testing detach all events
      *
-     * @covers Phossa2\Event\EventManager::off
+     * @covers Phossa2\Event\EventManager::clearListeners
      */
-    public function testOff3()
+    public function testDetach3()
     {
         $this->expectOutputString('callable1callable2');
 
@@ -146,13 +146,13 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             echo "callable2";
         };
 
-        $this->object->on('test1', $callable1);
-        $this->object->on('test2', $callable2);
+        $this->object->attach('test1', $callable1);
+        $this->object->attach('test2', $callable2);
         $this->object->trigger('test1');
         $this->object->trigger('test2');
 
         // off all events
-        $this->object->off();
+        $this->object->clearListeners('');
 
         $this->object->trigger('test1');
         $this->object->trigger('test2');

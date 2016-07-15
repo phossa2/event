@@ -25,8 +25,9 @@ use Phossa2\Event\Interfaces\CountableInterface;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     CountableInterface
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 trait CountableTrait
 {
@@ -45,8 +46,8 @@ trait CountableTrait
         /*# int */ $times,
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    ) {
+        /*# int */ $priority = 0
+    )/*# : bool */ {
         // wrap the callable
         $wrapper = function(EventInterface $event) use ($callable, $times) {
             static $cnt = 0;
@@ -60,9 +61,9 @@ trait CountableTrait
         $this->callable_map[$eventName][$oid] = $wrapper;
 
         // bind wrapper instead of the $callable
-        $this->on($eventName, $wrapper, $priority);
+        $this->attach($eventName, $wrapper, $priority);
 
-        return $this;
+        return true;
     }
 
     /**
@@ -71,32 +72,30 @@ trait CountableTrait
     public function one(
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    ) {
+        /*# int */ $priority = 0
+    )/*# : bool */ {
         return $this->many(1, $eventName, $callable, $priority);
     }
 
     /**
-     * Override `off()` in EventManager
+     * Override `detach()` in EventManager
      *
      * Added support for countable callable
      *
      * {@inheritDoc}
      */
-    public function off(
-        /*# string */ $eventName = '',
-        callable $callable = null
-    ) {
-        if (null !== $callable) {
-            $oid = $this->hashCallable($callable);
-            if (isset($this->callable_map[$eventName][$oid])) {
-                $callable = $this->callable_map[$eventName][$oid];
-                unset($this->callable_map[$eventName][$oid]);
+    public function detach($event, $callback)
+    {
+        if (null !== $callback) {
+            $oid = $this->hashCallable($callback);
+            if (isset($this->callable_map[$event][$oid])) {
+                $callback = $this->callable_map[$event][$oid];
+                unset($this->callable_map[$event][$oid]);
             }
         } else {
-            unset($this->callable_map[$eventName]);
+            unset($this->callable_map[$event]);
         }
-        return parent::off($eventName, $callable);
+        return parent::detach($event, $callback);
     }
 
     /**
@@ -112,5 +111,5 @@ trait CountableTrait
     }
 
     // from EventManagerInterface
-    abstract public function on(/*# string */ $eventName, callable $callable, /*# int */ $priority = 50);
+    abstract public function attach($event, $callback, $priority = 0);
 }

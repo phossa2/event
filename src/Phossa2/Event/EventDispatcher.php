@@ -35,8 +35,9 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 class EventDispatcher extends EventManager implements SharedManagerInterface, ListenerAwareInterface, CountableInterface
 {
@@ -48,7 +49,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
     /**
      * event prototype
      *
-     * @var    EventInterface|null
+     * @var    EventInterface
      * @access protected
      */
     protected $event_proto;
@@ -82,16 +83,19 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
      */
     protected function newEvent(
         $eventName,
-        $context,
-        array $properties
+        $target,
+        array $parameters
     )/*# : EventInterface */ {
         if (is_object($eventName)) {
             return $eventName;
-        } elseif ($this->event_proto) {
+        } elseif (null !== $this->event_proto) {
             $evt = clone $this->event_proto;
-            return $evt($eventName, $context, $properties);
+            $evt->setName($eventName);
+            $evt->setTarget($target);
+            $evt->setParams($parameters);
+            return $evt;
         } else {
-            return new Event($eventName, $context, $properties);
+            return new Event($eventName, $target, $parameters);
         }
     }
 

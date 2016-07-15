@@ -32,18 +32,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Phossa2\Event\Event::__invoke()
-     */
-    public function testInvoke()
-    {
-        $evt = new Event('prototype');
-        $evt('newEvent', $this->object, ['bingo', 'a' => 'c']);
-        $this->assertTrue('newEvent' === $evt->getName());
-        $this->assertTrue($this->object === $evt->getContext());
-        $this->assertEquals(['bingo', 'a' => 'c'], $evt->getProperties());
-    }
-
-    /**
      * @covers Phossa2\Event\Event::setName
      */
     public function testSetName()
@@ -90,93 +78,60 @@ class EventTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Phossa2\Event\Event::setContext
+     * @covers Phossa2\Event\Event::setTarget
      */
-    public function testSetContext1()
+    public function testSetTarget1()
     {
-        // context is an object
-        $this->assertTrue($this === $this->object->getContext());
+        // Target is an object
+        $this->assertTrue($this === $this->object->getTarget());
 
-        // set context to class name
-        $this->object->setContext(get_class($this->object));
+        // set Target to class name
+        $this->object->setTarget(get_class($this->object));
 
         // test class
         $this->assertEquals(
             get_class($this->object),
-            $this->object->getContext()
+            $this->object->getTarget()
         );
     }
 
     /**
-     * set context to a non-exist class name
-     *
-     * @covers Phossa2\Event\Event::setContext
-     * @expectedExceptionCode Phossa2\Event\Message\Message::EVT_CONTEXT_INVALID
-     * @expectedException Phossa2\Event\Exception\InvalidArgumentException
+     * @covers Phossa2\Event\Event::getTarget
      */
-    public function testSetContext2()
+    public function testGetTarget()
     {
-        $this->object->setContext('Event');
-    }
-
-    /**
-     * @covers Phossa2\Event\Event::getContext
-     */
-    public function testGetContext()
-    {
-        $this->object->setContext(get_class($this->object));
+        $this->object->setTarget(get_class($this->object));
         $this->assertTrue(
-            get_class($this->object) === $this->object->getContext()
+            get_class($this->object) === $this->object->getTarget()
         );
     }
 
     /**
-     * @covers Phossa2\Event\Event::hasProperty
+     * @covers Phossa2\Event\Event::getParam
      */
-    public function testHasProperty()
+    public function testGetParam1()
     {
-        $this->assertTrue($this->object->hasProperty('invoker'));
-        $this->assertFalse($this->object->hasProperty(10));
+        $this->assertTrue($this === $this->object->getParam('invoker'));
+        $this->assertTrue(null === $this->object->getParam('wow'));
     }
 
     /**
-     * @covers Phossa2\Event\Event::getProperty
+     * @covers Phossa2\Event\Event::getParams
      */
-    public function testGetProperty1()
+    public function testGetParams()
     {
-        $this->assertTrue($this === $this->object->getProperty('invoker'));
-        $this->assertTrue(null === $this->object->getProperty('wow'));
-    }
-
-    /**
-     * @covers Phossa2\Event\Event::setProperty
-     */
-    public function testSetProperty()
-    {
-        $this->object->setProperty('wow', 'bingo');
-        $this->assertTrue('bingo' === $this->object->getProperty('wow'));
-
-        // name is int , ok
-        $this->object->setProperty(10, 'bingo');
-    }
-
-    /**
-     * @covers Phossa2\Event\Event::getProperties
-     */
-    public function testGetProperties()
-    {
-        $p = $this->object->getProperties();
+        $p = $this->object->getParams();
         $this->assertArrayHasKey('invoker', $p);
     }
 
     /**
-     * @covers Phossa2\Event\Event::setProperties
+     * @covers Phossa2\Event\Event::setParams
      */
-    public function testSetProperties()
+    public function testSetParams()
     {
         $a = ['a' => 'aa', 'b' => 'bb'];
-        $this->object->setProperties($a);
-        $this->assertTrue($a === $this->object->getProperties());
+        $this->object->setParams($a);
+        $this->assertTrue($a === $this->object->getParams());
     }
 
     /**
@@ -202,7 +157,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
     public function testStopPropagation()
     {
         $this->assertTrue(false === $this->object->isPropagationStopped());
-        $this->object->stopPropagation();
+        $this->object->stopPropagation(true);
         $this->assertTrue(true === $this->object->isPropagationStopped());
     }
 

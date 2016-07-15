@@ -17,6 +17,7 @@ namespace Phossa2\Event;
 use Phossa2\Shared\Base\ObjectAbstract;
 use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Interfaces\EventQueueInterface;
+use Phossa2\Event\Interfaces\EventResultInterface;
 use Phossa2\Event\Interfaces\EventManagerInterface;
 
 /**
@@ -28,8 +29,9 @@ use Phossa2\Event\Interfaces\EventManagerInterface;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ObjectAbstract
  * @see     EventManagerInterface
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated to use the new EventManagerInterface
  */
 class EventManager extends ObjectAbstract implements EventManagerInterface
 {
@@ -44,44 +46,46 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function on(
-        /*# string */ $eventName,
-        callable $callable,
-        /*# int */ $priority = 50
-    ) {
-        if (!$this->hasEvent($eventName)) {
-            $this->events[$eventName] = $this->newEventQueue();
-        }
-        $this->events[$eventName]->insert($callable, $priority);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function off(
-        /*# string */ $eventName = '',
-        callable $callable = null
-    ) {
-        // remove all events
-        if ('' === $eventName) {
-            $this->events = [];
-
-        // dealing with one event
-        } elseif ($this->hasEvent($eventName)) {
-            $this->removeEventCallable($eventName, $callable);
-        }
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function trigger($event, $context = null, array $properties = [])
+    public function attach($event, $callback, $priority = 0)
     {
+        if (!$this->hasEvent($event)) {
+            $this->events[$event] = $this->newEventQueue();
+        }
+        $this->events[$event]->insert($callback, $priority);
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function detach($event, $callback)
+    {
+        if ($this->hasEvent($event)) {
+            $this->removeEventCallable($event, $callback);
+        } elseif ('' === $event) {
+            $this->events = []; // remove all events
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearListeners($event)
+    {
+        $this->detach($event, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function trigger($event, $target = null, $argv = array())
+    {
+        // result
+        $res = true;
+
         // make sure is an event
-        $evt = $this->newEvent($event, $context, $properties);
+        $evt = $this->newEvent($event, $target, $argv);
 
         // get handler queue
         $queue = $this->getMatchedQueue($evt->getName());
@@ -89,7 +93,12 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
         // walk thru the queue
         foreach ($queue as $q) {
             // execute the handler
-            $q['data']($evt);
+            $res = $q['data']($evt);
+
+            // add result to event
+            if ($evt instanceof EventResultInterface) {
+                $evt->addResult($res);
+            }
 
             // break out if event stopped
             if ($evt->isPropagationStopped()) {
@@ -97,7 +106,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
             }
         }
 
-        return $this;
+        return $res;
     }
 
     /**
@@ -116,20 +125,20 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
      * Create a new event
      *
      * @param  string|EventInterface $eventName
-     * @param  object|string|null $context
-     * @param  array $properties
+     * @param  object|string|null $target
+     * @param  array $parameters
      * @return EventInterface
      * @access protected
      */
     protected function newEvent(
         $eventName,
-        $context,
-        array $properties
+        $target,
+        array $parameters
     )/*# : EventInterface */ {
         if (is_object($eventName)) {
             return $eventName;
         } else {
-            return new Event($eventName, $context, $properties);
+            return new Event($eventName, $target, $parameters);
         }
     }
 

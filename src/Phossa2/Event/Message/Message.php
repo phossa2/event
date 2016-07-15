@@ -21,8 +21,9 @@ use Phossa2\Shared\Message\Message as BaseMessage;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 class Message extends BaseMessage
 {
@@ -31,16 +32,10 @@ class Message extends BaseMessage
      */
     const EVT_NAME_INVALID = 1606291014;
 
-    /*
-     * Event context "%s" is not valid
-     */
-    const EVT_CONTEXT_INVALID = 1606291015;
-
     /**
      * {@inheritDoc}
      */
     protected static $messages = [
         self::EVT_NAME_INVALID => 'Event name "%s" is not valid',
-        self::EVT_CONTEXT_INVALID => 'Event context "%s" is not valid',
     ];
 }

@@ -70,11 +70,11 @@ class EventCapableAbstractTest extends \PHPUnit_Framework_TestCase
      */
     public function testTriggerEvent()
     {
-        $this->expectOutputString('xxxyyy');
+        $this->expectOutputString('yyyxxx');
 
         // an interface level event manager
         EventDispatcher::getShareable('MyInterface')
-            ->on('*', function() { echo "yyy";}, 60);
+            ->attach('*', function() { echo "yyy";}, 60);
 
         // event capable class implmenting 'MyInterface'
         $obj = new \MyClass();
@@ -85,11 +85,13 @@ class EventCapableAbstractTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Get trigger() result
+     *
      * @covers Phossa2\Event\EventCapableAbstract::trigger
      */
     public function testTrigger()
     {
-        $this->expectOutputString('xxxyyy');
+        $this->expectOutputString('yyyxxx');
         $obj = new \MyClass();
         $this->assertTrue($obj->trigger('afterTest'));
     }

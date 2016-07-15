@@ -14,161 +14,82 @@
 
 namespace Phossa2\Event\Interfaces;
 
-use Phossa2\Event\Exception\InvalidArgumentException;
-
 /**
  * EventInterface
  *
+ * The proposed Psr\EventManager\EventInterface
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @see     \ArrayAccess
- * @version 2.0.0
- * @since   2.0.0 added
+ * @version 2.1.0
+ * @since   2.1.0 added
  */
-interface EventInterface extends \ArrayAccess
+interface EventInterface
 {
-    /**
-     * Initialize this event
-     *
-     * @param  string $eventName
-     * @param  object|string|null $context originator object or static classname
-     * @param  array $properties
-     * @return $this
-     * @throws InvalidArgumentException if argument[s] not right
-     * @access public
-     * @api
-     */
-    public function __invoke(
-        /*# string */ $eventName,
-        $context = null,
-        array $properties = []
-    );
-
-    /**
-     * Set event name
-     *
-     * @param  string $eventName event name
-     * @return $this
-     * @throws InvalidArgumentException if $eventName not a string
-     * @access public
-     * @api
-     */
-    public function setName(/*# string */ $eventName);
-
     /**
      * Get event name
      *
      * @return string
-     * @access public
-     * @api
      */
-    public function getName()/*# : string */;
+    public function getName();
 
     /**
-     * Set event context, usually an object or static class name
+     * Get target/context from which event was triggered
      *
-     * @param  object|string|null $context object or static classname
-     * @return $this
-     * @throws InvalidArgumentException if $context not right
-     * @access public
-     * @api
+     * @return null|string|object
      */
-    public function setContext($context);
+    public function getTarget();
 
     /**
-     * Get event context, usually an object or static class name
+     * Get parameters passed to the event
      *
-     * @return object|string|null
-     * @access public
-     * @api
+     * @return array
      */
-    public function getContext();
+    public function getParams();
 
     /**
-     * Has event property with $name
+     * Get a single parameter by name
      *
-     * @param  string $name property name
-     * @return bool
-     * @access public
-     * @api
-     */
-    public function hasProperty(/*# string */ $name)/*#: bool */;
-
-    /**
-     * Get event property with $name. Returns NULL if not found
-     *
-     * @param  string $name property name
+     * @param  string $name
      * @return mixed
-     * @access public
-     * @api
      */
-    public function getProperty(/*# string */ $name);
+    public function getParam($name);
 
     /**
-     * Set the event property, null to delete this property
+     * Set the event name
      *
-     * @param  string $name property name
-     * @param  mixed $value property value
-     * @return $this
-     * @access public
-     * @api
+     * @param  string $name
+     * @return void
      */
-    public function setProperty(/*# string */ $name, $value);
+    public function setName($name);
 
     /**
-     * Get event's all properties in array
+     * Set the event target
      *
-     * @return array
-     * @access public
-     * @api
+     * @param  null|string|object $target
+     * @return void
      */
-    public function getProperties()/*# : array */;
+    public function setTarget($target);
 
     /**
-     * Set/replace the event all properties
+     * Set event parameters
      *
-     * @param  array $properties property array
-     * @return $this
-     * @access public
-     * @api
+     * @param  array $params
+     * @return void
      */
-    public function setProperties(array $properties);
+    public function setParams(array $params);
 
     /**
-     * Add result from the current handler
+     * Indicate whether or not to stop propagating this event
      *
-     * @param  mixed $result
-     * @return $this
-     * @access public
-     * @api
+     * @param  bool $flag
      */
-    public function addResult($result);
+    public function stopPropagation($flag);
 
     /**
-     * Get all the results
-     *
-     * @return array
-     * @access public
-     * @api
-     */
-    public function getResults()/*# : array */;
-
-    /**
-     * Stop event propagation
-     *
-     * @param  bool $stop stop propagation
-     * @return $this
-     * @access public
-     * @api
-     */
-    public function stopPropagation(/*# bool */ $stop = true);
-
-    /**
-     * Is event propagation stopped
+     * Has this event indicated event propagation should stop?
      *
      * @return bool
-     * @access public
-     * @api
      */
-    public function isPropagationStopped()/*# : bool */;
+    public function isPropagationStopped();
 }

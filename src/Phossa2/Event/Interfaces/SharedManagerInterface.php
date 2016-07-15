@@ -25,8 +25,9 @@ use Phossa2\Shared\Shareable\ShareableInterface;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 changed priority default value
  */
 interface SharedManagerInterface extends ShareableInterface, EventManagerInterface
 {
@@ -47,6 +48,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      * @param  string $eventName
      * @param  callable $callable
      * @param  int $priority
+     * @return bool true on success false on failure
      * @access public
      * @static
      * @api
@@ -55,8 +57,8 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
         $scope,
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    );
+        /*# int */ $priority = 0
+    )/*# : bool */;
 
     /**
      * Unbind a callable from a specific eventName in $scope
@@ -64,6 +66,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      * @param  string|string[] $scope
      * @param  string $eventName
      * @param  callable $callable
+     * @return bool true on success false on failure
      * @access public
      * @static
      * @api
@@ -72,7 +75,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
         $scope,
         /*# string */ $eventName = '',
         callable $callable = null
-    );
+    )/*# : bool */;
 
     /**
      * Bind a callable to event name in the global scope
@@ -82,6 +85,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      * @param  string $eventName
      * @param  callable $callable
      * @param  int $priority
+     * @return bool true on success false on failure
      * @access public
      * @static
      * @api
@@ -89,8 +93,8 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
     public static function onGlobalEvent(
         /*# string */ $eventName,
         callable $callable,
-        /*# int */ $priority = 50
-    );
+        /*# int */ $priority = 0
+    )/*# : bool */;
 
     /**
      * Unbind a callable from a specific eventName in the global scope
@@ -99,6 +103,7 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
      *
      * @param  string $eventName
      * @param  callable $callable
+     * @return bool true on success false on failure
      * @access public
      * @static
      * @api
@@ -106,5 +111,5 @@ interface SharedManagerInterface extends ShareableInterface, EventManagerInterfa
     public static function offGlobalEvent(
         /*# string */ $eventName = '',
         callable $callable = null
-    );
+    )/*# : bool */;
 }

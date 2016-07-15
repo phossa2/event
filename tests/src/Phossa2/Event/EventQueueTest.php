@@ -110,9 +110,9 @@ class EventQueueTest
         }
 
         // check order
-        $this->assertTrue($callable2 === $result[0]);
+        $this->assertTrue($callable1 === $result[0]);
         $this->assertTrue($callable3 === $result[1]);
-        $this->assertTrue($callable1 === $result[2]);
+        $this->assertTrue($callable2 === $result[2]);
     }
 
     /**

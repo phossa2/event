@@ -21,10 +21,10 @@ use Phossa2\Event\Message\Message;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 return [
-    Message::EVT_NAME_INVALID => '事件名称  "%s" 形式错误',
-    Message::EVT_CONTEXT_INVALID => '事件环境  "%s" 形式错误',
+    Message::EVT_NAME_INVALID => '触发事件名称 "%s" 不符合规则',
 ];

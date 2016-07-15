@@ -15,6 +15,7 @@
 namespace Phossa2\Event\Traits;
 
 use Phossa2\Event\Interfaces\ListenerInterface;
+use Phossa2\Event\Interfaces\EventManagerInterface;
 use Phossa2\Event\Interfaces\ListenerAwareInterface;
 
 /**
@@ -26,30 +27,31 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     ListenerAwareInterface
- * @version 2.0.0
+ * @see     EventManagerInterface
+ * @version 2.1.0
  * @since   2.0.0 added
+ * @since   2.1.0 updated
  */
 trait ListenerAwareTrait
 {
     /**
      * {@inheritDoc}
      */
-    public function attachListener(ListenerInterface $listener)
+    public function attachListener(ListenerInterface $listener)/*# : bool */
     {
         // get the standardized handlers of the $listener
         $events = $this->listenerEvents($listener);
 
         // add to manager's event pool
         foreach ($events as $handler) {
-            if (null !== $handler[3]) {
-                /* @var $em EventManagerInterface */
+            /* @var $em EventManagerInterface */
+            $em = $this;
+            if (null !== $handler[3]) { // found scope
                 $em = static::getShareable($handler[3]);
-                $em->on($handler[0], $handler[1], $handler[2]);
-            } else {
-                $this->on($handler[0], $handler[1], $handler[2]);
             }
+            $em->attach($handler[0], $handler[1], $handler[2]);
         }
-        return $this;
+        return true;
     }
 
     /**
@@ -58,7 +60,7 @@ trait ListenerAwareTrait
     public function detachListener(
         ListenerInterface $listener,
         /*# string */ $eventName = ''
-    ) {
+    )/*# : bool */ {
         // get the standardized handlers of the $listener
         $events = $this->listenerEvents($listener);
 
@@ -69,7 +71,7 @@ trait ListenerAwareTrait
             }
         }
 
-        return $this;
+        return true;
     }
 
     /**
@@ -136,7 +138,7 @@ trait ListenerAwareTrait
             $scope = isset($data[2]) ? $data[2] : null;
         } else {
             $callable = $this->expandCallable($listener, $data);
-            $priority = 50;
+            $priority = 0; // default
             $scope = null;
         }
         return [$eventName, $callable, $priority, $scope];
@@ -169,17 +171,11 @@ trait ListenerAwareTrait
      */
     protected function offListenerEvent(array $data)
     {
-        // scope found
-        if (null !== $data[3]) {
-            /* @var $em EventManagerInterface */
+        /* @var $em EventManagerInterface */
+        $em = $this;
+        if (null !== $data[3]) { // scope found
             $em = static::getShareable($data[3]);
-            $em->off($data[0], $data[1]);
-        } else {
-            $this->off($data[0], $data[1]);
         }
+        $em->detach($data[0], $data[1]);
     }
-
-    // from EventManagerInterface
-    abstract public function on(/*# string */ $eventName, callable $callable, /*# int */ $priority = 50);
-    abstract public function off(/*# string */ $eventName = '', callable $callable = null);
 }
