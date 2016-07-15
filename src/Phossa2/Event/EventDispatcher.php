@@ -19,9 +19,11 @@ use Phossa2\Event\Traits\NameGlobbingTrait;
 use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Traits\SharedManagerTrait;
 use Phossa2\Event\Traits\ListenerAwareTrait;
+use Phossa2\Event\Traits\EventPrototypeTrait;
 use Phossa2\Event\Interfaces\CountableInterface;
 use Phossa2\Event\Interfaces\SharedManagerInterface;
 use Phossa2\Event\Interfaces\ListenerAwareInterface;
+use Phossa2\Event\Interfaces\EventPrototypeInterface;
 
 /**
  * EventDispatcher
@@ -38,21 +40,15 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  * @version 2.1.0
  * @since   2.0.0 added
  * @since   2.1.0 updated
+ * @since   2.1.1 added EventPrototype
  */
-class EventDispatcher extends EventManager implements SharedManagerInterface, ListenerAwareInterface, CountableInterface
+class EventDispatcher extends EventManager implements SharedManagerInterface, ListenerAwareInterface, CountableInterface, EventPrototypeInterface
 {
     use CountableTrait,
         NameGlobbingTrait,
         SharedManagerTrait,
-        ListenerAwareTrait;
-
-    /**
-     * event prototype
-     *
-     * @var    EventInterface
-     * @access protected
-     */
-    protected $event_proto;
+        ListenerAwareTrait,
+        EventPrototypeTrait;
 
     /**
      * Create a event manager with defined scopes
@@ -71,32 +67,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
         }
 
         // set event prototype
-        $this->event_proto = $event_proto;
-    }
-
-    /**
-     * Override `newEvent()` in EventManager.
-     *
-     * Added event prototype support
-     *
-     * {@inheritDoc}
-     */
-    protected function newEvent(
-        $eventName,
-        $target,
-        array $parameters
-    )/*# : EventInterface */ {
-        if (is_object($eventName)) {
-            return $eventName;
-        } elseif (null !== $this->event_proto) {
-            $evt = clone $this->event_proto;
-            $evt->setName($eventName);
-            $evt->setTarget($target);
-            $evt->setParams($parameters);
-            return $evt;
-        } else {
-            return new Event($eventName, $target, $parameters);
-        }
+        $this->setEventPrototype($event_proto);
     }
 
     /**

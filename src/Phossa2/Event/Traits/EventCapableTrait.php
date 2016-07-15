@@ -16,7 +16,6 @@ namespace Phossa2\Event\Traits;
 
 use Phossa2\Event\Event;
 use Phossa2\Event\EventDispatcher;
-use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Interfaces\ListenerInterface;
 use Phossa2\Event\Interfaces\EventManagerInterface;
 use Phossa2\Event\Interfaces\ListenerAwareInterface;
@@ -27,11 +26,14 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     EventCapableInterface
- * @version 2.0.0
+ * @version 2.1.1
  * @since   2.0.0 added
+ * @since   2.1.1 updated
  */
 trait EventCapableTrait
 {
+    use EventPrototypeTrait;
+
     /**
      * event manager or dispatcher
      *
@@ -39,14 +41,6 @@ trait EventCapableTrait
      * @access protected
      */
     protected $event_manager;
-
-    /**
-     * event prototype
-     *
-     * @var    EventInterface
-     * @access protected
-     */
-    protected $event_proto;
 
     /**
      * {@inheritDoc}
@@ -82,20 +76,11 @@ trait EventCapableTrait
     /**
      * {@inheritDoc}
      */
-    public function setEventPrototype(EventInterface $eventPrototype)
-    {
-        $this->event_proto = $eventPrototype;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function trigger(
         /*# string */ $eventName,
         array $parameters = []
     )/*# : bool */ {
-        $evt = $this->createEvent($eventName, $parameters);
+        $evt = $this->newEvent($eventName, $this, $parameters);
         return $this->getEventManager()->trigger($evt);
     }
 
@@ -106,33 +91,8 @@ trait EventCapableTrait
         /*# string */ $eventName,
         array $parameters = []
     )/*# : EventInterface */ {
-        $evt = $this->createEvent($eventName, $parameters);
+        $evt = $this->newEvent($eventName, $this, $parameters);
         $this->getEventManager()->trigger($evt);
         return $evt;
-    }
-
-    /**
-     * Create an event with $eventName and parameters
-     *
-     * @param  string $eventName
-     * @param  array $parameters
-     * @return EventInterface
-     * @access protected
-     */
-    protected function createEvent(
-        /*# string */ $eventName,
-        array $parameters
-    )/*# : EventInterface */ {
-        // get event prototype
-        if (is_null($this->event_proto)) {
-            return new Event($eventName, $this, $parameters);
-        } else {
-            // clone the prototype
-            $evt = clone $this->event_proto;
-            $evt->setName($eventName);
-            $evt->setTarget($this);
-            $evt->setParams($parameters);
-            return $evt;
-        }
     }
 }

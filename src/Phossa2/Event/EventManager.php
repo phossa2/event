@@ -24,6 +24,14 @@ use Phossa2\Event\Interfaces\EventManagerInterface;
  *
  * A basic implementation of EventManagerInterface
  *
+ * ```php
+ * $events = new EventManager();
+ *
+ * $events->attach('test', function() { echo 'test'; });
+ *
+ * $events->trigger('test');
+ * ```
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     ObjectAbstract
@@ -55,6 +63,9 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
     }
 
     /**
+     * if call is NULL, clear this event.
+     * if event is '', clear all events
+     *
      * {@inheritDoc}
      */
     public function detach($event, $callback)
@@ -124,8 +135,8 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
      */
     protected function newEvent(
         $eventName,
-        $target,
-        array $parameters
+        $target = null,
+        array $parameters = []
     )/*# : EventInterface */ {
         if (is_object($eventName)) {
             return $eventName;

@@ -22,10 +22,12 @@ namespace Phossa2\Event\Interfaces;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @version 2.1.0
+ * @see     EventPrototypeInterface
  * @since   2.0.0 added
  * @since   2.1.0 updated
+ * @since   2.1.1 added EventPrototypeInterface
  */
-interface EventCapableInterface
+interface EventCapableInterface extends EventPrototypeInterface
 {
     /**
      * Setup event manager
@@ -51,22 +53,6 @@ interface EventCapableInterface
      * @api
      */
     public function getEventManager()/*# : EventManagerInterface */;
-
-    /**
-     * Setup event prototype
-     *
-     * ```php
-     * $this->setEventPrototype(
-     *     new MyEvent('prototype')
-     * );
-     * ```
-     *
-     * @param  EventInterface $eventPrototype
-     * @return $this
-     * @access public
-     * @api
-     */
-    public function setEventPrototype(EventInterface $eventPrototype);
 
     /**
      * Trigger an event and return the event status (isPropagationStopped)

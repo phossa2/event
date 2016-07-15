@@ -22,7 +22,7 @@ use Phossa2\Event\Exception\InvalidArgumentException;
 /**
  * Event
  *
- * Basic implementation of EventInterface with array access to parameters
+ * Basic implementation of EventInterface
  *
  * ```php
  * // create event
@@ -32,11 +32,6 @@ use Phossa2\Event\Exception\InvalidArgumentException;
  *     ['username' => 'phossa'] // event parameters
  * );
  *
- * // get/set event parameter
- * if ('phossa' === $evt['username']) {
- *     $evt['username'] = 'phossa2';
- * }
- *
  * // stop event
  * $evt->stopPropagation();
  * ```
@@ -45,12 +40,12 @@ use Phossa2\Event\Exception\InvalidArgumentException;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ObjectAbstract
  * @see     EventInterface
- * @see     \ArrayAccess
  * @version 2.0.0
  * @since   2.0.0 added
  * @since   2.1.0 using psr EventInterface now
+ * @since   2.1.1 removed ArrayAccess
  */
-class Event extends ObjectAbstract implements EventInterface, \ArrayAccess
+class Event extends ObjectAbstract implements EventInterface
 {
     /**
      * event name
@@ -185,37 +180,5 @@ class Event extends ObjectAbstract implements EventInterface, \ArrayAccess
     public function isPropagationStopped()
     {
         return $this->stopped;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function offsetExists($offset)/*# : bool */
-    {
-        return isset($this->parameters[$offset]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function offsetGet($offset)
-    {
-        return $this->getParam($offset);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->parameters[$offset] = $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->parameters[$offset]);
     }
 }

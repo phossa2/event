@@ -20,7 +20,7 @@ use Phossa2\Event\Interfaces\EventQueueInterface;
 /**
  * EventQueue
  *
- * One implementation of EventQueueInterface
+ * One implementation of EventQueueInterface with priority queue
  *
  * ```php
  * // create a new queue

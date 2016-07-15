@@ -145,27 +145,5 @@ class EventTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(true === $this->object->isPropagationStopped());
     }
 
-    /**
-     * @covers Phossa2\Event\Event::offsetExists
-     * @covers Phossa2\Event\Event::offsetGet
-     * @covers Phossa2\Event\Event::offsetSet
-     * @covers Phossa2\Event\Event::offsetUnset
-     */
-    public function testOffsetExists()
-    {
-        // exists
-        $this->assertTrue(isset($this->object['invoker']));
-
-        // get
-        $this->assertTrue($this === $this->object['invoker']);
-
-        // set
-        $this->object['wow'] = 'bingo';
-        $this->assertTrue('bingo' === $this->object['wow']);
-
-        // unset
-        $this->object['wow'] = null;
-        $this->assertFalse(isset($this->object['wow']));
-    }
 }
 

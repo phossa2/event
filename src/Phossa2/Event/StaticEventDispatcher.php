@@ -22,6 +22,16 @@ use Phossa2\Event\Interfaces\EventManagerInterface;
 /**
  * StaticEventDispatcher
  *
+ * A static wrapper of EventDispatcher
+ *
+ * ```php
+ * // attach
+ * StaticEventDispatcher::attach('test', function() { echo 'test'; });
+ *
+ * // trigger
+ * StaticEventDispatcher::trigger('test');
+ * ```
+ *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @version 2.1.0
