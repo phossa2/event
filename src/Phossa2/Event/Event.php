@@ -17,7 +17,6 @@ namespace Phossa2\Event;
 use Phossa2\Event\Message\Message;
 use Phossa2\Shared\Base\ObjectAbstract;
 use Phossa2\Event\Interfaces\EventInterface;
-use Phossa2\Event\Interfaces\EventResultInterface;
 use Phossa2\Event\Exception\InvalidArgumentException;
 
 /**
@@ -46,13 +45,12 @@ use Phossa2\Event\Exception\InvalidArgumentException;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ObjectAbstract
  * @see     EventInterface
- * @see     EventResultInterface
  * @see     \ArrayAccess
  * @version 2.0.0
  * @since   2.0.0 added
  * @since   2.1.0 using psr EventInterface now
  */
-class Event extends ObjectAbstract implements EventInterface, EventResultInterface, \ArrayAccess
+class Event extends ObjectAbstract implements EventInterface, \ArrayAccess
 {
     /**
      * event name
@@ -79,14 +77,6 @@ class Event extends ObjectAbstract implements EventInterface, EventResultInterfa
      * @access protected
      */
     protected $parameters;
-
-    /**
-     * Results from the handlers
-     *
-     * @var    array
-     * @access protected
-     */
-    protected $results = [];
 
     /**
      * stop propagation
@@ -195,22 +185,6 @@ class Event extends ObjectAbstract implements EventInterface, EventResultInterfa
     public function isPropagationStopped()
     {
         return $this->stopped;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addResult($result)
-    {
-        $this->results[] = $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getResults()/*# : array */
-    {
-        return $this->results;
     }
 
     /**

@@ -17,7 +17,6 @@ namespace Phossa2\Event;
 use Phossa2\Shared\Base\ObjectAbstract;
 use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Interfaces\EventQueueInterface;
-use Phossa2\Event\Interfaces\EventResultInterface;
 use Phossa2\Event\Interfaces\EventManagerInterface;
 
 /**
@@ -93,9 +92,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
             // execute the handler
             $res = $q['data']($evt);
 
-            if ($evt instanceof EventResultInterface) {
-                $evt->addResult($res);
-            }
+            // stopped ?
             if ($evt->isPropagationStopped()) {
                 break;
             }

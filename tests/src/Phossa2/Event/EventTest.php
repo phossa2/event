@@ -135,22 +135,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Phossa2\Event\Event::addResult
-     * @covers Phossa2\Event\Event::getResults
-     */
-    public function testAddResult()
-    {
-        $this->object->addResult('bingo');
-        $this->assertEquals(['bingo'], $this->object->getResults());
-
-        $this->object->addResult('wow');
-        $this->assertEquals(
-            ['bingo', 'wow'],
-            $this->object->getResults()
-        );
-    }
-
-    /**
      * @covers Phossa2\Event\Event::stopPropagation
      * @covers Phossa2\Event\Event::isPropagationStopped
      */
