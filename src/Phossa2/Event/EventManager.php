@@ -121,7 +121,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
      */
     protected function hasEvent(/*# string */ $eventName)/*# : bool */
     {
-        return isset($this->events[$eventName]);
+        return isset($this->events[(string) $eventName]);
     }
 
     /**
