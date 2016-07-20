@@ -40,5 +40,5 @@ interface EventPrototypeInterface
      * @access public
      * @api
      */
-    public function setEventPrototype(EventInterface $eventPrototype);
+    public function setEventPrototype(EventInterface $eventPrototype = null);
 }
