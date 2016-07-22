@@ -14,6 +14,8 @@
 
 namespace Phossa2\Event\Interfaces;
 
+use Phossa2\Shared\Queue\PriorityQueueInterface;
+
 /**
  * EventQueueInterface
  *
@@ -21,51 +23,12 @@ namespace Phossa2\Event\Interfaces;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
+ * @see     PriorityQueueInterface
  * @version 2.1.0
  * @since   2.0.0 added
  * @since   2.1.0 changed priority
+ * @since   2.1.2 now extending PriorityQueueInterface
  */
-interface EventQueueInterface extends \IteratorAggregate, \Countable
+interface EventQueueInterface extends PriorityQueueInterface
 {
-    /**
-     * Insert event handler into the queue with priority
-     *
-     * @param  callable $callable
-     * @param  int $priority priority, higher number executed first
-     * @return $this
-     * @access public
-     * @api
-     */
-    public function insert(callable $callable, /*# int */ $priority = 0);
-
-    /**
-     * Remove an event handler from the queue
-     *
-     * @param  callable $callable
-     * @return $this
-     * @access public
-     * @api
-     */
-    public function remove(callable $callable);
-
-    /**
-     * Empty/flush the queue
-     *
-     * @return $this
-     * @access public
-     * @api
-     */
-    public function flush();
-
-    /**
-     * Combine with another handler queue and return a new and combined one
-     *
-     * @param  EventQueueInterface $queue
-     * @return EventQueueInterface a new and combined event queue
-     * @access public
-     * @api
-     */
-    public function combine(
-        EventQueueInterface $queue
-    )/*# : EventQueueInterface */;
 }

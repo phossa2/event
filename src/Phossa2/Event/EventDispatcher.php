@@ -15,7 +15,7 @@
 namespace Phossa2\Event;
 
 use Phossa2\Event\Traits\CountableTrait;
-use Phossa2\Event\Traits\NameGlobbingTrait;
+use Phossa2\Shared\Globbing\GlobbingTrait;
 use Phossa2\Event\Interfaces\EventInterface;
 use Phossa2\Event\Traits\SharedManagerTrait;
 use Phossa2\Event\Traits\ListenerAwareTrait;
@@ -44,8 +44,8 @@ use Phossa2\Event\Interfaces\EventPrototypeInterface;
  */
 class EventDispatcher extends EventManager implements SharedManagerInterface, ListenerAwareInterface, CountableInterface, EventPrototypeInterface
 {
-    use CountableTrait,
-        NameGlobbingTrait,
+    use GlobbingTrait,
+        CountableTrait,
         SharedManagerTrait,
         ListenerAwareTrait,
         EventPrototypeTrait;
@@ -116,7 +116,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
         /*# string */ $eventName
     )/*: EventQueueInterface */ {
         $nqueue = $this->newEventQueue();
-        $names  = $this->globEventNames($eventName, $this->getEventNames());
+        $names  = $this->globbingNames($eventName, $this->getEventNames());
         foreach ($names as $evtName) {
             if ($this->hasEvent($evtName)) {
                 $nqueue = $nqueue->combine($this->events[$evtName]);
