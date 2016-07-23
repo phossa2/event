@@ -5,10 +5,13 @@ use Phossa2\Event\EventCapableAbstract;
 
 interface MyInterface
 {
-
 }
 
-class MyClass extends EventCapableAbstract implements MyInterface
+interface MyInterface2
+{
+}
+
+class MyClass extends EventCapableAbstract implements MyInterface, MyInterface2
 {
     public function myMethod()
     {
@@ -26,5 +29,4 @@ class MyClass extends EventCapableAbstract implements MyInterface
 
 class MyEvent extends Event
 {
-
 }

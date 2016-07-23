@@ -67,7 +67,7 @@ trait EventCapableTrait
     {
         // create the default slave
         if (is_null($this->event_manager)) {
-            // add classname as a scope
+            // add own classname as scope
             $this->setEventManager(new EventDispatcher(get_class($this)));
         }
         return $this->event_manager;
