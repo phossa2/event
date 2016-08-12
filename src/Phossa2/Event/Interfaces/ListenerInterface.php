@@ -21,8 +21,9 @@ namespace Phossa2\Event\Interfaces;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.1.0
+ * @version 2.1.3
  * @since   2.0.0 added
+ * @since   2.1.3 added registerEvent()
  */
 interface ListenerInterface
 {
@@ -38,12 +39,13 @@ interface ListenerInterface
      *         eventName1 => 'method1',
      *
      *         // 2 methods
-     *         eventName2 => ['callable1, 'method2'],
+     *         eventName2 => ['callable1', 'method2'],
      *
      *         // priority 20 and in a scope
      *         eventName2 => ['method2', 20, 'mvcScope'], // with priority 20
      *
      *         eventName3 => [
+     *             'method1',
      *             ['method3', 50],
      *             ['method4', 70, 'anotherScope']
      *         ]
@@ -56,4 +58,16 @@ interface ListenerInterface
      * @api
      */
     public function eventsListening()/*# : array */;
+
+    /**
+     * Add events handler
+     *
+     * @param  string $eventName
+     * @param  mixed $handler
+     * @return $this
+     * @since  2.1.3 added
+     * @access public
+     * @api
+     */
+    public function registerEvent(/*# string */ $eventName, $handler);
 }
