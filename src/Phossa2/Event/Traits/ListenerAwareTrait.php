@@ -28,9 +28,10 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ListenerAwareInterface
  * @see     EventManagerInterface
- * @version 2.1.0
+ * @version 2.1.4
  * @since   2.0.0 added
  * @since   2.1.0 updated
+ * @since   2.1.4 added hasPriority()
  */
 trait ListenerAwareTrait
 {
@@ -109,7 +110,7 @@ trait ListenerAwareTrait
             $result = [$data];
         } elseif (is_string($data)) {
             $result = [$data];
-        } elseif (is_int($data[1])) {
+        } elseif ($this->hasPriority($data)) {
             $result = [$data];
         } else {
             $result = $data;
@@ -177,5 +178,16 @@ trait ListenerAwareTrait
             $em = static::getShareable($data[3]);
         }
         $em->detach($data[0], $data[1]);
+    }
+
+    /**
+     * the second value is the priority value
+     *
+     * @param array $data
+     * @access protected
+     */
+    protected function hasPriority(array $data)/*# : bool */
+    {
+        return isset($data[1]) && is_int($data[1]);
     }
 }

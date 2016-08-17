@@ -22,8 +22,9 @@ use Phossa2\Event\Interfaces\ListenerInterface;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     ListenerInterface
- * @version 2.1.3
+ * @version 2.1.4
  * @since   2.1.3 added
+ * @since   2.1.4 updated
  */
 trait ListenerTrait
 {
@@ -35,6 +36,9 @@ trait ListenerTrait
      */
     protected $events_listening = [];
 
+    /**
+     * {@inheritDoc}
+     */
     public function eventsListening()/*# : array */
     {
         return $this->events_listening;
