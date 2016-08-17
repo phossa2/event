@@ -26,9 +26,10 @@ use Phossa2\Event\Interfaces\ListenerAwareInterface;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     EventCapableInterface
- * @version 2.1.1
+ * @version 2.1.5
  * @since   2.0.0 added
  * @since   2.1.1 updated
+ * @since   2.1.5 added attachSelfToEventManager()
  */
 trait EventCapableTrait
 {
@@ -43,25 +44,30 @@ trait EventCapableTrait
     protected $event_manager;
 
     /**
+     * flag for attachListener
+     *
+     * @var    bool
+     * @access protected
+     * @since  2.1.5
+     */
+    protected $listener_attached = false;
+
+    /**
      * {@inheritDoc}
+     *
+     * @since  2.1.5 moved attachListener to getEventManager
      */
     public function setEventManager(
         EventManagerInterface $eventManager
     ) {
         $this->event_manager = $eventManager;
-
-        // attach events from $this
-        if ($eventManager instanceof ListenerAwareInterface &&
-            $this instanceof ListenerInterface
-        ) {
-            $eventManager->attachListener($this);
-        }
-
         return $this;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @since  2.1.5 added attachSelfToEventManager()
      */
     public function getEventManager()/*# : EventManagerInterface */
     {
@@ -70,6 +76,10 @@ trait EventCapableTrait
             // add own classname as scope
             $this->setEventManager(new EventDispatcher(get_class($this)));
         }
+
+        // attach self to the event manager if not yet
+        $this->attachSelfToEventManager();
+
         return $this->event_manager;
     }
 
@@ -94,5 +104,23 @@ trait EventCapableTrait
         $evt = $this->newEvent($eventName, $this, $parameters);
         $this->getEventManager()->trigger($evt);
         return $evt;
+    }
+
+    /**
+     * Attach $this to the event manager if not yet
+     *
+     * @access protected
+     * @since  2.1.5
+     */
+    protected function attachSelfToEventManager()
+    {
+        if (!$this->listener_attached) {
+            if ($this->event_manager instanceof ListenerAwareInterface &&
+                $this instanceof ListenerInterface
+            ) {
+                $this->event_manager->attachListener($this);
+            }
+            $this->listener_attached = true;
+        }
     }
 }
