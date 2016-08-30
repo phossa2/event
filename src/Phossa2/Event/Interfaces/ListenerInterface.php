@@ -21,9 +21,10 @@ namespace Phossa2\Event\Interfaces;
  *
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
- * @version 2.1.3
+ * @version 2.1.7
  * @since   2.0.0 added
  * @since   2.1.3 added registerEvent()
+ * @since   2.1.7 updated doc
  */
 interface ListenerInterface
 {
@@ -32,25 +33,22 @@ interface ListenerInterface
      *
      * e.g.
      * ```php
-     * public function eventsListening()
-     * {
-     *     return [
-     *         // one method of $this
-     *         eventName1 => 'method1',
+     * [
+     *     // one method of $this
+     *     eventName1 => 'method1',
      *
-     *         // 2 methods
-     *         eventName2 => ['callable1', 'method2'],
+     *     // 2 methods
+     *     eventName2 => ['callable1', 'method2'],
      *
-     *         // priority 20 and in a scope
-     *         eventName2 => ['method2', 20, 'mvcScope'], // with priority 20
+     *     // priority 20 and in a scope
+     *     eventName2 => ['method2', 20, 'mvcScope'], // with priority 20
      *
-     *         eventName3 => [
-     *             'method1',
-     *             ['method3', 50],
-     *             ['method4', 70, 'anotherScope']
-     *         ]
-     *     ];
-     * }
+     *     eventName3 => [
+     *         'method1',
+     *         ['method3', 50],
+     *         ['method4', 70, 'anotherScope']
+     *     ]
+     * ];
      * ```
      *
      * @return array
@@ -60,7 +58,17 @@ interface ListenerInterface
     public function eventsListening()/*# : array */;
 
     /**
-     * Add events handler
+     * Add to events listening
+     *
+     * handler in the format of
+     *
+     * - 'method1'  // method of $this
+     *
+     * - ['method2', 20] // method of $this with priority
+     *
+     * - callable1 // a callable
+     *
+     * - ['method3', 20, 'mvc'] // with scope also
      *
      * @param  string $eventName
      * @param  mixed $handler

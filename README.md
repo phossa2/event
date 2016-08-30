@@ -92,7 +92,10 @@ Usage
 
   The globbing rules are similiar to the PHP function `glob()`, where
 
-  - `*` in the string means any chars except the dot
+  - `*` in the string means any chars except the dot.
+
+  - If '*' at the end, will match any chars including the dot. e.g. 'login.*'
+    will match 'login.attempt.before'.
 
   - `.` means the dot.
 
@@ -301,11 +304,22 @@ Usage
   }
   ```
 
+- `EventableExtensionAbstract` and `EventableExtensionCapableAbstract`
+
+  `EventableExtensionCapableAbstract` is the base class supporting events and
+  extensions.
+
+  Detail usage can be found in [phossa2/cache](https://github.com/phossa2/cache)
+  `Phossa2\Cache\CachePool` extends `EventableExtensionCapableAbstract` and
+  `Phossa2\Cache\Extension\ByPass` extends `EventableExtensionAbstract`.
+
+  Or look at [phossa2/route](https://github.com/phossa2/route).
+
 - <a name="class"></a>Class or interface level events support
 
   Class or interface name can be used as the `scope`. When events bound to these
   kind of scopes, any events triggered by child class will also search callables
-  defined in these class/interface level shared event managers.
+  defined in parent class/interface level shared event managers.
 
   ```php
   // define event '*' for interface 'MyInterface'
