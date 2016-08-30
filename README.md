@@ -94,7 +94,7 @@ Usage
 
   - `*` in the string means any chars except the dot.
 
-  - If '*' at the end, will match any chars including the dot. e.g. 'login.*'
+  - If `*` at the end, will match any chars including the dot. e.g. `login.*`
     will match 'login.attempt.before'.
 
   - `.` means the dot.
