@@ -90,7 +90,9 @@ trait ListenerAwareTrait
             $newData = $this->expandToHandler($data);
             foreach ($newData as $handler) {
                 $result[] = $this->expandWithPriority(
-                    $listener, $eventName, $handler
+                    $listener,
+                    $eventName,
+                    $handler
                 );
             }
         }

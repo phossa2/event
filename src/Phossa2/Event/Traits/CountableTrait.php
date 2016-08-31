@@ -49,7 +49,7 @@ trait CountableTrait
         /*# int */ $priority = 0
     )/*# : bool */ {
         // wrap the callable
-        $wrapper = function(EventInterface $event) use ($callable, $times) {
+        $wrapper = function (EventInterface $event) use ($callable, $times) {
             static $cnt = 0;
             if ($cnt++ < $times) {
                 call_user_func($callable, $event);
