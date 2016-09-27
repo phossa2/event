@@ -1,10 +1,11 @@
 # phossa2/event
 [![Build Status](https://travis-ci.org/phossa2/event.svg?branch=master)](https://travis-ci.org/phossa2/event)
 [![Code Quality](https://scrutinizer-ci.com/g/phossa2/event/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phossa2/event/)
+[![Code Climate](https://codeclimate.com/github/phossa2/event/badges/gpa.svg)](https://codeclimate.com/github/phossa2/event)
 [![PHP 7 ready](http://php7ready.timesplinter.ch/phossa2/event/master/badge.svg)](https://travis-ci.org/phossa2/event)
 [![HHVM](https://img.shields.io/hhvm/phossa2/event.svg?style=flat)](http://hhvm.h4cc.de/package/phossa2/event)
 [![Latest Stable Version](https://img.shields.io/packagist/vpre/phossa2/event.svg?style=flat)](https://packagist.org/packages/phossa2/event)
-[![License](https://poser.pugx.org/phossa2/event/license)](http://mit-license.org/)
+[![License](https://img.shields.io/:license-mit-blue.svg)](http://mit-license.org/)
 
 **phossa2/event** is a PSR-14 event manager library for PHP.
 
@@ -367,12 +368,29 @@ Usage
   });
   ```
 
+Change log
+---
+
+Please see [CHANGELOG](CHANGELOG.md) from more information.
+
+Testing
+---
+
+```bash
+$ composer test
+```
+
+Contributing
+---
+
+Please see [CONTRIBUTE](CONTRIBUTE.md) for more information.
+
 Dependencies
 ---
 
 - PHP >= 5.4.0
 
-- phossa2/shared >= 2.0.12
+- phossa2/shared >= 2.0.21
 
 License
 ---

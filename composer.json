@@ -4,7 +4,7 @@
     "license": "MIT",
     "homepage": "https://github.com/phossa2/event",
     "description": "PSR-14 event manager implementation libraray for PHP",
-    "keywords": [ "event", "event manager", "psr", "psr-14", "phossa" ],
+    "keywords": ["event", "event manager", "psr", "psr-14", "phossa", "phossa2"],
     "authors": [
         {
             "name": "Hong Zhang",
@@ -16,7 +16,7 @@
         "phossa2/shared": "^2.0.21"
     },
     "autoload": {
-        "psr-0": { "Phossa2\\Event\\": "src/" }
+        "psr-4": { "Phossa2\\Event\\": "Event/" }
     },
     "require-dev": {
         "phpunit/phpunit": "4.*",
@@ -24,11 +24,8 @@
     },
     "scripts": {
         "test": "phpunit",
-        "check": "phpcs --standard=psr2 src/",
-        "format": "phpcbf --standard=psr2 src/"
-    },
-    "replace": {
-        "phossa/phossa-event": "*"
+        "check": "phpcs --standard=psr2 Event/",
+        "format": "phpcbf --standard=psr2 Event/"
     },
     "provide": {
         "psr/event-manager-implementation": "^1.0"
@@ -38,7 +35,6 @@
             "php": "5.4.0"
         }
     },
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "2.1-dev"
