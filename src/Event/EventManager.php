@@ -192,7 +192,7 @@ class EventManager extends ObjectAbstract implements EventManagerInterface
             $this->events[$eventName]->remove($callable);
         }
 
-        // when count is zeror, remove queue
+        // when count is zero, remove queue
         if (count($this->events[$eventName]) === 0) {
             unset($this->events[$eventName]);
         }

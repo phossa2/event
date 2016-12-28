@@ -53,7 +53,7 @@ class EventDispatcher extends EventManager implements SharedManagerInterface, Li
     /**
      * Create a event manager with defined scopes
      *
-     * @param  string|array $scopes
+     * @param  string|string[] $scopes
      * @param  EventInterface $event_proto event prototype if any
      * @access public
      */

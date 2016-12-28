@@ -50,6 +50,15 @@ class StaticEventDispatcher extends StaticAbstract
     protected static $event_manager = [];
 
     /**
+     * default static scope
+     *
+     * @var    string
+     * @access protected
+     * @staticvar
+     */
+    protected static $static_scope = '__STATIC__';
+
+    /**
      * Provides a static interface for event dispatcher's dynamic methods
      *
      * @param  string $name method name
@@ -102,7 +111,7 @@ class StaticEventDispatcher extends StaticAbstract
     {
         if (!isset(self::$event_manager[get_called_class()])) {
             self::$event_manager[get_called_class()] =
-                EventDispatcher::getShareable('__STATIC__');
+                EventDispatcher::getShareable(static::$static_scope);
         }
         return self::$event_manager[get_called_class()];
     }
