@@ -70,12 +70,12 @@ interface ListenerInterface
      *
      * - ['method3', 20, 'mvc'] // with scope also
      *
-     * @param  string $eventName
+     * @param  string|string[] $eventName event name[s]
      * @param  mixed $handler
      * @return $this
      * @since  2.1.3 added
      * @access public
      * @api
      */
-    public function registerEvent(/*# string */ $eventName, $handler);
+    public function registerEvent($eventName, $handler);
 }

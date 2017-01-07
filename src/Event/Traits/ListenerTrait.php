@@ -22,9 +22,9 @@ use Phossa2\Event\Interfaces\ListenerInterface;
  * @package Phossa2\Event
  * @author  Hong Zhang <phossa@126.com>
  * @see     ListenerInterface
- * @version 2.1.4
+ * @version 2.1.5
  * @since   2.1.3 added
- * @since   2.1.4 updated
+ * @since   2.1.5 accept event names in registerEvent()
  */
 trait ListenerTrait
 {
@@ -47,12 +47,14 @@ trait ListenerTrait
     /**
      * {@inheritDoc}
      */
-    public function registerEvent(/*# string */ $eventName, $handler)
+    public function registerEvent($eventName, $handler)
     {
-        if (!isset($this->events_listening[$eventName])) {
-            $this->events_listening[$eventName] = [];
+        foreach ((array) $eventName as $evtName) {
+            if (!isset($this->events_listening[$evtName])) {
+                $this->events_listening[$evtName] = [];
+            }
+            $this->events_listening[$evtName][] = $handler;
         }
-        $this->events_listening[$eventName][] = $handler;
 
         return $this;
     }
