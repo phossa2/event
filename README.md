@@ -1,4 +1,7 @@
-# phossa2/event [ABANDONED PLEASE USE  phoole/event library instead]
+# phossa2/event [ABANDONED]
+
+**PLEASE USE  phoole/event library instead**
+
 [![Build Status](https://travis-ci.org/phossa2/event.svg?branch=master)](https://travis-ci.org/phossa2/event)
 [![Code Quality](https://scrutinizer-ci.com/g/phossa2/event/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phossa2/event/)
 [![Code Climate](https://codeclimate.com/github/phossa2/event/badges/gpa.svg)](https://codeclimate.com/github/phossa2/event)
