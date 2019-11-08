@@ -1,6 +1,6 @@
 # phossa2/event [ABANDONED]
 
-**PLEASE USE  phoole/event library instead**
+**PLEASE USE [phoole/event](https://github.com/phoole/event) library instead**
 
 [![Build Status](https://travis-ci.org/phossa2/event.svg?branch=master)](https://travis-ci.org/phossa2/event)
 [![Code Quality](https://scrutinizer-ci.com/g/phossa2/event/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phossa2/event/)
